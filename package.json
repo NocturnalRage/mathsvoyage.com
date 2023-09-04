@@ -1,0 +1,31 @@
+{
+  "name": "cubeshack.com",
+  "version": "1.0.0",
+  "description": "My Website",
+  "main": "index.js",
+  "scripts": {
+    "dev": "mix",
+    "development": "mix",
+    "watch": "mix watch",
+    "watch-poll": "mix watch -- --watch-options-poll=1000",
+    "hot": "mix watch --hot",
+    "prod": "mix --production",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jeff Plumb",
+  "license": "ISC",
+  "devDependencies": {
+    "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.0",
+    "bootstrap-icons": "^1.10.5",
+    "eslint": "^8.42.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-vue": "^9.14.1",
+    "eslint-webpack-plugin": "^4.0.1",
+    "laravel-mix": "^6.0.49",
+    "laravel-mix-eslint": "^0.2.0",
+    "resolve-url-loader": "^5.0.0",
+    "sass": "^1.62.1",
+    "sass-loader": "^12.6.0"
+  }
+}

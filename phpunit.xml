@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="vendor/autoload.php"
+         colors="true">
+    <testsuites>
+        <testsuite name="cubeshack">
+            <directory>./tests/src/App</directory>
+            <directory>./tests/src/Framework</directory>
+            <directory>./tests/views</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

@@ -1,0 +1,7 @@
+source 0001_create_db_change_table.sql
+source 0002_create_email_status_table.sql
+source 0003_create_users_table.sql
+source 0004_create_password_reset_request_table.sql
+source 0005_create_remember_me_table.sql
+source 0006_create_subscriber_table.sql
+source 0007_create_mail_queue_table.sql

@@ -1,0 +1,12 @@
+/node_modules
+/vendor
+.env
+.env.test
+public/css
+public/fonts
+public/js
+public/mix-manifest.json
+logs
+tags
+TODO
+.phpunit.result.cache
