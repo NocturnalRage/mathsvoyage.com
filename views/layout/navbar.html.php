@@ -10,8 +10,9 @@
         <li class="nav-item">
           <a class="nav-link px-4 <?= $activeLink == 'Home' ? 'active' : ''; ?>" href="/"><i class="bi bi-house"></i> Home</a>
         </li>
-        <?php if ($loggedIn) { ?>
-        <?php } ?>
+        <li class="nav-item">
+          <a class="nav-link px-4 <?= $activeLink == 'Curricula' ? 'active' : ''; ?>" href="/curriculum"><i class="bi bi-table"></i> Curricula</a>
+        </li>
       </ul>
       <ul class="navbar-nav col-md-3 justify-content-lg-center">
         <?php if ($loggedIn) { ?>

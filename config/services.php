@@ -47,6 +47,55 @@ $di->set('AuthenticationController', function () use ($di) {
     );
 });
 
+$di->set('CurriculaController', function () use ($di) {
+    return new App\Controllers\CurriculaController(
+        $di->get('Request'),
+        $di->get('Response')
+    );
+});
+
+$di->set('SkillsController', function () use ($di) {
+    return new App\Controllers\SkillsController(
+        $di->get('Request'),
+        $di->get('Response')
+    );
+});
+
+$di->set('SkillQuestionsController', function () use ($di) {
+    return new App\Controllers\SkillQuestionsController(
+        $di->get('Request'),
+        $di->get('Response')
+    );
+});
+
+$di->set('VideosController', function () use ($di) {
+    return new App\Controllers\VideosController(
+        $di->get('Request'),
+        $di->get('Response')
+    );
+});
+
+$di->set('WorkedSolutionsController', function () use ($di) {
+    return new App\Controllers\WorkedSolutionsController(
+        $di->get('Request'),
+        $di->get('Response')
+    );
+});
+
+$di->set('TopicsController', function () use ($di) {
+    return new App\Controllers\TopicsController(
+        $di->get('Request'),
+        $di->get('Response')
+    );
+});
+
+$di->set('QuizzesController', function () use ($di) {
+    return new App\Controllers\QuizzesController(
+        $di->get('Request'),
+        $di->get('Response')
+    );
+});
+
 /* Repositories start here */
 $di->set('dbh', function () {
     return new \Mysqli(
@@ -62,6 +111,34 @@ $di->set('UserRepository', function () use ($di) {
 
 $di->set('MailRepository', function () use ($di) {
     return new App\Repositories\MysqlMailRepository($di->get('dbh'));
+});
+
+$di->set('CurriculaRepository', function () use ($di) {
+    return new App\Repositories\MysqlCurriculaRepository($di->get('dbh'));
+});
+
+$di->set('QuizzesRepository', function () use ($di) {
+    return new App\Repositories\MysqlQuizzesRepository($di->get('dbh'));
+});
+
+$di->set('SkillsRepository', function () use ($di) {
+    return new App\Repositories\MysqlSkillsRepository($di->get('dbh'));
+});
+
+$di->set('SkillQuestionsRepository', function () use ($di) {
+    return new App\Repositories\MysqlSkillQuestionsRepository($di->get('dbh'));
+});
+
+$di->set('VideosRepository', function () use ($di) {
+    return new App\Repositories\MysqlVideosRepository($di->get('dbh'));
+});
+
+$di->set('WorkedSolutionsRepository', function () use ($di) {
+    return new App\Repositories\MysqlWorkedSolutionsRepository($di->get('dbh'));
+});
+
+$di->set('TopicsRepository', function () use ($di) {
+    return new App\Repositories\MysqlTopicsRepository($di->get('dbh'));
 });
 
 $di->set('ReCaptcha', function () {

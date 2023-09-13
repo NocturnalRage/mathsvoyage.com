@@ -14,7 +14,7 @@ include __DIR__.'/../layout/navbar.html.php';
         <?php $this->formMethod('patch'); ?>
         <?php $this->crsfToken(); ?>
         <div class="form-floating mb-3">
-          <input type="given_name" class="form-control" name="given_name" id="given_name" value="<?php if (isset($formVars['given_name'])) {
+          <input type="text" class="form-control" name="given_name" id="given_name" value="<?php if (isset($formVars['given_name'])) {
               echo $this->esc($formVars['given_name']);
           } ?>" maxlength="100" required autofocus>
           <label for="given_name">Given name</label>
@@ -24,7 +24,7 @@ include __DIR__.'/../layout/navbar.html.php';
         <?php } ?>
 
         <div class="form-floating mb-3">
-          <input type="family_name" class="form-control" name="family_name" id="family_name" value="<?php if (isset($formVars['family_name'])) {
+          <input type="text" class="form-control" name="family_name" id="family_name" value="<?php if (isset($formVars['family_name'])) {
               echo $this->esc($formVars['family_name']);
           } ?>" maxlength="100" required>
           <label for="family_name">Family name</label>

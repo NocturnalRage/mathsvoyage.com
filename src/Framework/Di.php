@@ -51,7 +51,6 @@ class Di
      * Gets a magic property.
      *
      * @param  string  $key The property name.
-     * @return null
      */
     public function __get($key)
     {
@@ -63,7 +62,6 @@ class Di
      *
      * @param  string  $key The property name.
      * @param  mixed  $val The property value.
-     * @return null
      */
     public function __set($key, $val)
     {
@@ -98,7 +96,6 @@ class Di
      *
      * @param  string  $name The object name.
      * @param  callable  $callable A callable that returns an object.
-     * @return null
      */
     public function set($name, $callable)
     {

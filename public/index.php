@@ -25,6 +25,8 @@ if ($request->loggedIn) {
             $request->user = $users->find($request->cookie['rememberme']);
             $request->loginUser($request->user['email']);
         }
+    } else {
+        $request->user = ['user_id' => 0];
     }
 }
 // Load router
@@ -45,9 +47,9 @@ if ($matchRequestMethod != 'GET' && ! $request->crsfTokenIsValid()) {
         $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         foreach ($match['params'] as $key => $param) {
             if ($requestMethod == 'POST') {
-                $_POST[$key] = $param;
+                $request->post[$key] = $param;
             } else {
-                $_GET[$key] = $param;
+                $request->get[$key] = $param;
             }
         }
     }

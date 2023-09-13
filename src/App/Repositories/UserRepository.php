@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-interface userRepository
+interface UserRepository
 {
     public function create(
         $givenName,

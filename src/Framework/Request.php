@@ -163,7 +163,6 @@ class Request
      * superglobal.
      *
      * @param  string  $name The property name; must be 'session'.
-     * @return null
      */
     public function __unset($name)
     {
@@ -177,7 +176,6 @@ class Request
     /**
      * Creates a crsf token for this session
      *
-     * @param null
      * @return string
      * @return string The CRSF token.
      */
@@ -194,7 +192,6 @@ class Request
     /**
      * Check if a valid crsf token was posted
      *
-     * @param null
      * @return string
      * @return book
      */
@@ -266,7 +263,6 @@ class Request
      * Validates request data
      *
      * @param  string  $name The property name; must be 'session'.
-     * @return null
      */
     public function validate($validationData)
     {
@@ -295,6 +291,11 @@ class Request
                 } elseif ($rule == 'email') {
                     if (filter_var($this->request[$field], FILTER_VALIDATE_EMAIL) === false) {
                         $errors[$field] = 'Not a valid email address';
+                        break;
+                    }
+                } elseif ($rule == 'int') {
+                    if (filter_var($this->request[$field], FILTER_VALIDATE_INT) === false) {
+                        $errors[$field] = 'Not an integer';
                         break;
                     }
                 }

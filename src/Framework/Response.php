@@ -71,7 +71,6 @@ class Response
      * Sets the base path prefix for view files.
      *
      * @param  string  $view The view file.
-     * @return null
      */
     public function setBase($base)
     {
@@ -92,7 +91,6 @@ class Response
      * Sets the view file.
      *
      * @param  string  $view The view file.
-     * @return null
      */
     public function setView($view)
     {
@@ -129,7 +127,6 @@ class Response
      * Sets the variables to be extracted into the view scope.
      *
      * @param  array  $vars The variables to be extracted into the view scope.
-     * @return null
      */
     public function setVars(array $vars)
     {
@@ -141,7 +138,6 @@ class Response
      * Adds to the variables to be extracted into the view scope.
      *
      * @param  array  $vars The variables to be extracted into the view scope.
-     * @return null
      */
     public function addVars(array $vars)
     {
@@ -164,7 +160,6 @@ class Response
      * call.
      *
      * @param  callable  $func The callable to be invoked.
-     * @return null
      */
     public function setLastCall($func)
     {
@@ -197,8 +192,6 @@ class Response
 
     /**
      * Buffers a call to `header()`.
-     *
-     * @return null
      */
     public function header()
     {
@@ -211,8 +204,6 @@ class Response
      * Sets header for a redirect
      * Updates render to false
      * so that only a redirect occurs
-     *
-     * @return null
      */
     public function redirect($url)
     {
@@ -260,8 +251,6 @@ class Response
 
     /**
      * Outputs the buffered headers, buffered view, and calls the user function.
-     *
-     * @return null
      */
     public function send()
     {
@@ -296,8 +285,6 @@ class Response
 
     /**
      * Outputs the buffered calls to `header`, `setcookie`, etc.
-     *
-     * @return null
      */
     public function sendHeaders()
     {
@@ -309,8 +296,6 @@ class Response
 
     /**
      * Invokes `$this->call`.
-     *
-     * @return null
      */
     public function invokeLastCall()
     {

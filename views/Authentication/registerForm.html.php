@@ -13,7 +13,7 @@ include __DIR__.'/../layout/navbar.html.php';
           <p>Let's set up your free account. Already have one? <a href="/login">Login now</a></p>
           <?php $this->crsfToken(); ?>
           <div class="form-floating mb-3">
-            <input type="givenName" class="form-control" name="givenName" id="givenName" value="<?php if (isset($formVars['givenName'])) {
+            <input type="text" class="form-control" name="givenName" id="givenName" value="<?php if (isset($formVars['givenName'])) {
                 echo $this->esc($formVars['givenName']);
             } ?>" maxlength="100" required autofocus>
             <label for="givenName">Given name</label>
@@ -23,7 +23,7 @@ include __DIR__.'/../layout/navbar.html.php';
           <?php } ?>
 
           <div class="form-floating mb-3">
-            <input type="familyName" class="form-control" name="familyName" id="familyName" value="<?php if (isset($formVars['familyName'])) {
+            <input type="text" class="form-control" name="familyName" id="familyName" value="<?php if (isset($formVars['familyName'])) {
                 echo $this->esc($formVars['familyName']);
             } ?>" maxlength="100" required>
             <label for="familyName">Family name</label>

@@ -44,6 +44,11 @@ abstract class Controller
         file_put_contents($_ENV['APPLICATION_LOG_FILE'], $message, FILE_APPEND);
     }
 
+    public function isAdmin()
+    {
+        return $this->request->isAdmin();
+    }
+
     public function loggedIn()
     {
         return $this->request->loggedIn;
@@ -59,5 +64,12 @@ abstract class Controller
         $slug = trim($slug, '-');
 
         return $slug;
+    }
+
+    public function redirectTo($link)
+    {
+        $this->response->redirect($link);
+
+        return $this->response;
     }
 }

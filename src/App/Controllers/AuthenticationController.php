@@ -407,46 +407,46 @@ class AuthenticationController extends Controller
         return $this->response;
     }
 
-  private function previouslyBounced($emailStatusId)
-  {
-      return $emailStatusId == 1 ? false : true;
-  }
+    private function previouslyBounced($emailStatusId)
+    {
+        return $emailStatusId == 1 ? false : true;
+    }
 
-  private function noTokenReceived()
-  {
-      if (isset($this->request->get['token'])) {
-          return false;
-      } else {
-          return true;
-      }
-  }
+    private function noTokenReceived()
+    {
+        if (isset($this->request->get['token'])) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
-  private function tokenProcessed($users)
-  {
-      $user = $users->findByToken($this->request->get['token']);
-      if (! $user) {
-          return false;
-      }
-      $rowsUpdated = $users->activate($user['user_id']);
-      if ($rowsUpdated != 1) {
-          return false;
-      }
-      $_SESSION['loginEmail'] = $user['email'];
-      $this->request->setLoginStatus();
-      $this->subscribeToNewsletter($users, $user['user_id']);
+    private function tokenProcessed($users)
+    {
+        $user = $users->findByToken($this->request->get['token']);
+        if (! $user) {
+            return false;
+        }
+        $rowsUpdated = $users->activate($user['user_id']);
+        if ($rowsUpdated != 1) {
+            return false;
+        }
+        $_SESSION['loginEmail'] = $user['email'];
+        $this->request->setLoginStatus();
+        $this->subscribeToNewsletter($users, $user['user_id']);
 
-      return true;
-  }
+        return true;
+    }
 
-  private function subscribeToNewsletter($users, $userId)
-  {
-      $listId = 1;
-      $activeStatus = 1;
-      $subscriber = $users->findSubscriber($listId, $userId);
-      if (! $subscriber) {
-          $users->createSubscriber($listId, $userId);
-      } else {
-          $users->updateSubscriber($listId, $userId, $activeStatus);
-      }
-  }
+    private function subscribeToNewsletter($users, $userId)
+    {
+        $listId = 1;
+        $activeStatus = 1;
+        $subscriber = $users->findSubscriber($listId, $userId);
+        if (! $subscriber) {
+            $users->createSubscriber($listId, $userId);
+        } else {
+            $users->updateSubscriber($listId, $userId, $activeStatus);
+        }
+    }
 }

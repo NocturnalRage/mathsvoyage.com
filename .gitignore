@@ -4,6 +4,8 @@
 .env.test
 public/css
 public/fonts
+public/images/skill-questions
+public/images/worked-solutions
 public/js
 public/mix-manifest.json
 logs
