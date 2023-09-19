@@ -9,7 +9,7 @@ class HomeHtmlTest extends BasicViewHtmlTestCase
 {
     public function testHome()
     {
-        $pageTitle = 'Cube Shack';
+        $pageTitle = 'MathsVoyage.com';
         $metaDescription = 'Welcome to my website';
         $activeLink = 'Home';
         $response = new Response('views');

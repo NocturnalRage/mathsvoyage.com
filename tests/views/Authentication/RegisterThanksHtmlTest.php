@@ -22,7 +22,7 @@ class RegisterThanksHtmlTest extends BasicViewHtmlTestCase
             'isAdmin' => false,
         ]);
         $output = $response->requireView();
-        $expect = 'Welcome to Cube Shack';
+        $expect = 'Welcome to MathsVoyage.com';
         $this->assertStringContainsString($expect, $output);
         $expect = 'Your Email Address Has Been Confirmed';
         $this->assertStringContainsString($expect, $output);

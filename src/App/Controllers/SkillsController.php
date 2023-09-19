@@ -181,6 +181,7 @@ class SkillsController extends Controller
                 'curriculum' => $curriculum,
                 'topic' => $topic,
                 'skill' => $skill,
+                'returnSlug' => '/topics/'.$curriculum['curriculum_slug'].'/'.$topic['slug'].'#skill-'.$skill['skill_id'],
                 'quizInfo' => $quizInfo,
             ]);
 

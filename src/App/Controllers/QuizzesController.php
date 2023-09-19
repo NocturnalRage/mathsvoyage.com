@@ -31,6 +31,16 @@ class QuizzesController extends Controller
             return $this->response;
         }
 
+        if (! $quiz = $quizzes->findQuiz($this->request->get['quizId'])) {
+            $this->response->setVars([
+                'status' => json_encode('error'),
+                'options' => json_encode([]),
+                'message' => json_encode('You must select a valid quiz to fetch options for.'),
+            ]);
+
+            return $this->response;
+        }
+
         if (! $options = $quizzes->getQuizOptions($this->request->get['quizId'])) {
             $this->response->setVars([
                 'status' => json_encode('error'),
@@ -57,6 +67,7 @@ class QuizzesController extends Controller
         $currentQuestionImage = $options[0]['question_image'];
         $currentSkillQuestionId = $options[0]['skill_question_id'];
         $currentSkillQuestionTypeId = $options[0]['skill_question_type_id'];
+        $currentAnswer = $options[0]['answer'];
 
         foreach ($options as $option) {
             if ($option['skill_question_id'] != $currentSkillQuestionId) {
@@ -68,6 +79,7 @@ class QuizzesController extends Controller
                     'question_image' => $currentQuestionImage,
                     'skill_question_id' => $currentSkillQuestionId,
                     'skill_question_type_id' => $currentSkillQuestionTypeId,
+                    'answer' => $currentAnswer,
                     'answers' => $quizOption,
                     'hints' => $hints,
                 ];
@@ -76,6 +88,7 @@ class QuizzesController extends Controller
                 $currentQuestionImage = $option['question_image'];
                 $currentSkillQuestionId = $option['skill_question_id'];
                 $currentSkillQuestionTypeId = $option['skill_question_type_id'];
+                $currentAnswer = $option['answer'];
             }
             $quizOption[] = [
                 'skill_question_option_id' => $option['skill_question_option_id'],
@@ -92,6 +105,7 @@ class QuizzesController extends Controller
             'question_image' => $currentQuestionImage,
             'skill_question_id' => $currentSkillQuestionId,
             'skill_question_type_id' => $currentSkillQuestionTypeId,
+            'answer' => $currentAnswer,
             'answers' => $quizOption,
             'hints' => $hints,
         ];
@@ -130,6 +144,15 @@ class QuizzesController extends Controller
             return $this->response;
         }
 
+        if (! $quiz = $quizzes->findQuiz($this->request->post['quizId'])) {
+            $this->response->setVars([
+                'status' => json_encode('error'),
+                'message' => json_encode('You must select a valid quiz to record a response for.'),
+            ]);
+
+            return $this->response;
+        }
+
         if (! isset($this->request->post['skillQuestionId'])) {
             $this->response->setVars([
                 'status' => json_encode('error'),
@@ -138,14 +161,33 @@ class QuizzesController extends Controller
 
             return $this->response;
         }
-        if (! isset($this->request->post['skillQuestionOptionId'])) {
+
+        if (! isset($this->request->post['skillQuestionTypeId'])) {
             $this->response->setVars([
                 'status' => json_encode('error'),
-                'message' => json_encode('You must select a response to record it.'),
+                'message' => json_encode('You must provide the question type to record the response.'),
             ]);
 
             return $this->response;
         }
+
+        if ($this->request->post['skillQuestionTypeId'] == 1 && ! isset($this->request->post['skillQuestionOptionId'])) {
+            $this->response->setVars([
+                'status' => json_encode('error'),
+                'message' => json_encode('You must provide an option for a multiple choice question.'),
+            ]);
+
+            return $this->response;
+        }
+        if ($this->request->post['skillQuestionTypeId'] == 2 && ! isset($this->request->post['answer'])) {
+            $this->response->setVars([
+                'status' => json_encode('error'),
+                'message' => json_encode('You must provide a numeric answer for a numeric question.'),
+            ]);
+
+            return $this->response;
+        }
+
         if (! isset($this->request->post['correctUnaided'])) {
             $this->response->setVars([
                 'status' => json_encode('error'),
@@ -171,16 +213,7 @@ class QuizzesController extends Controller
             return $this->response;
         }
 
-        if (! $options = $quizzes->getQuizOptions($this->request->post['quizId'])) {
-            $this->response->setVars([
-                'status' => json_encode('error'),
-                'message' => json_encode('You must select a valid quiz to record a response for.'),
-            ]);
-
-            return $this->response;
-        }
-
-        if ($this->request->user['user_id'] != $options[0]['user_id']) {
+        if ($this->request->user['user_id'] != $quiz['user_id']) {
             $this->response->setVars([
                 'status' => json_encode('error'),
                 'message' => json_encode('You must select your own quiz to record a response.'),
@@ -189,21 +222,40 @@ class QuizzesController extends Controller
             return $this->response;
         }
 
-        if (! $quizzes->updateQuizQuestion(
-            $this->request->post['quizId'],
-            $this->request->post['skillQuestionId'],
-            $this->request->post['skillQuestionOptionId'],
-            $this->request->post['correctUnaided'],
-            $this->request->post['questionStartTime'],
-            $this->request->post['questionEndTime']
-        )
-        ) {
-            $this->response->setVars([
-                'status' => json_encode('error'),
-                'message' => json_encode('Could not record response.'),
-            ]);
+        if ($this->request->post['skillQuestionTypeId'] == 1) {
+            if (! $quizzes->updateQuizMultipleChoiceQuestion(
+                $this->request->post['quizId'],
+                $this->request->post['skillQuestionId'],
+                $this->request->post['skillQuestionOptionId'],
+                $this->request->post['correctUnaided'],
+                $this->request->post['questionStartTime'],
+                $this->request->post['questionEndTime']
+            )
+            ) {
+                $this->response->setVars([
+                    'status' => json_encode('error'),
+                    'message' => json_encode('Could not record response.'),
+                ]);
 
-            return $this->response;
+                return $this->response;
+            }
+        } elseif ($this->request->post['skillQuestionTypeId'] == 2) {
+            if (! $quizzes->updateQuizNumericQuestion(
+                $this->request->post['quizId'],
+                $this->request->post['skillQuestionId'],
+                $this->request->post['answer'],
+                $this->request->post['correctUnaided'],
+                $this->request->post['questionStartTime'],
+                $this->request->post['questionEndTime']
+            )
+            ) {
+                $this->response->setVars([
+                    'status' => json_encode('error'),
+                    'message' => json_encode('Could not record response.'),
+                ]);
+
+                return $this->response;
+            }
         }
 
         $this->response->setVars([
@@ -311,12 +363,12 @@ class QuizzesController extends Controller
             $percent = $result['correct'] / $result['total'];
             $quizTypeId = $result['quiz_type_id'];
             $skillQuizType = 1;
-            $tutorialQuizType = 2;
+            $topicQuizType = 2;
             if ($percent >= 1) {
                 if ($previousMastery == 4) {
                     $mastery = 4;
                     $mastery_desc = 'Mastered';
-                } elseif ($previousMastery == 3 && $quizTypeId == $tutorialQuizType) {
+                } elseif ($previousMastery == 3 && $quizTypeId >= $topicQuizType) {
                     $mastery = 4;
                     $mastery_desc = 'Mastered';
                 } else {
@@ -324,8 +376,13 @@ class QuizzesController extends Controller
                     $mastery_desc = 'Proficent';
                 }
             } elseif ($percent >= 0.7) {
-                $mastery = 2;
-                $mastery_desc = 'Familiar';
+                if ($previousMaster == 4) {
+                    $mastery = 3;
+                    $mastery_desc = 'Proficent';
+                } else {
+                    $mastery = 2;
+                    $mastery_desc = 'Familiar';
+                }
             } else {
                 $mastery = 1;
                 $mastery_desc = 'Attempted';

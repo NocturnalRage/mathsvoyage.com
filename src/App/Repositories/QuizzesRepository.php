@@ -12,18 +12,31 @@ interface QuizzesRepository
 
     public function createTopicQuiz($topic_id, $user_id);
 
+    public function createCurriculumQuiz($curriculum_id, $user_id);
+
     public function createQuizQuestion($quiz_id, $skill_question_id);
 
     public function findIncompleteSkillQuizInfo($skill_id, $user_id);
+
+    public function findQuiz($quizId);
 
     public function getQuizOptions($quizId);
 
     public function getSkillQuestionHints($skillQuestionId);
 
-    public function updateQuizQuestion(
+    public function updateQuizMultipleChoiceQuestion(
         $quizId,
         $skillQuestionId,
         $skillQuestionOptionId,
+        $correctUnaided,
+        $questionStartTime,
+        $questionEndTime
+    );
+
+    public function updateQuizNumericQuestion(
+        $quizId,
+        $skillQuestionId,
+        $answer,
         $correctUnaided,
         $questionStartTime,
         $questionEndTime
@@ -44,4 +57,10 @@ interface QuizzesRepository
     public function findIncompleteTopicQuizInfo($topicId, $userId);
 
     public function getAllTopicQuestions($topicId);
+
+    public function findIncompleteCurriculumQuiz($curriculumId, $userId);
+
+    public function findIncompleteCurriculumQuizInfo($curriculumId, $userId);
+
+    public function getAllCurriculumQuestions($curriculumId);
 }

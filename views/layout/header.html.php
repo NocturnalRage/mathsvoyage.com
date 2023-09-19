@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
   <meta name="description" content="<?= $this->esc($metaDescription) ?>">
-  <meta name="author" content="Cube Shack">
+  <meta name="author" content="MathsVoyage.com">
   <title><?= $this->esc($pageTitle); ?></title>
   <link rel="stylesheet" href="<?= mix('css/app.css'); ?>">
   <script src="<?= mix('js/app.js'); ?>"></script>

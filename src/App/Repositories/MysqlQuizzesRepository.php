@@ -85,6 +85,27 @@ class MysqlQuizzesRepository implements QuizzesRepository
         return $quizId;
     }
 
+    public function createCurriculumQuiz($curriculum_id, $user_id)
+    {
+        $sql = 'INSERT INTO quizzes (
+              quiz_id,
+              quiz_type_id,
+              curriculum_id,
+              user_id,
+              created_at,
+              started_at,
+              completed_at
+            )
+            VALUES (NULL, 3, ?, ?, now(), NULL, NULL)';
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->bind_param('ii', $curriculum_id, $user_id);
+        $stmt->execute();
+        $quizId = $this->dbh->insert_id;
+        $stmt->close();
+
+        return $quizId;
+    }
+
     public function createQuizQuestion($quiz_id, $skill_question_id)
     {
         $sql = 'INSERT INTO quiz_questions (
@@ -125,6 +146,20 @@ class MysqlQuizzesRepository implements QuizzesRepository
         return $result->fetch_assoc();
     }
 
+    public function findQuiz($quizId)
+    {
+        $sql = 'SELECT q.*
+              FROM   quizzes q
+              WHERE  q.quiz_id = ?';
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->bind_param('i', $quizId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        return $result->fetch_assoc();
+    }
+
     public function getQuizOptions($quizId)
     {
         $sql = 'SELECT q.quiz_id,
@@ -136,11 +171,13 @@ class MysqlQuizzesRepository implements QuizzesRepository
                      sqo.skill_question_option_id,
                      sqo.option_text,
                      sqo.option_order,
-                     sqo.correct
+                     sqo.correct,
+                     sqn.answer
               FROM   quizzes q
               JOIN   quiz_questions qq on qq.quiz_id = q.quiz_id
               JOIN   skill_questions sq on sq.skill_question_id = qq.skill_question_id
-              JOIN   skill_question_options sqo on sqo.skill_question_id = sq.skill_question_id
+              LEFT JOIN   skill_question_options sqo on sqo.skill_question_id = sq.skill_question_id
+              LEFT JOIN   skill_question_numbers sqn on sqn.skill_question_id = sq.skill_question_id
               JOIN   skills s on s.skill_id = sq.skill_id
               WHERE  q.quiz_id = ?';
         $stmt = $this->dbh->prepare($sql);
@@ -170,7 +207,7 @@ class MysqlQuizzesRepository implements QuizzesRepository
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function updateQuizQuestion(
+    public function updateQuizMultipleChoiceQuestion(
         $quizId,
         $skillQuestionId,
         $skillQuestionOptionId,
@@ -189,6 +226,38 @@ class MysqlQuizzesRepository implements QuizzesRepository
         $stmt->bind_param(
             'iissii',
             $skillQuestionOptionId,
+            $correctUnaided,
+            $questionStartTime,
+            $questionEndTime,
+            $quizId,
+            $skillQuestionId
+        );
+        $stmt->execute();
+        $rowsUpdated = $this->dbh->affected_rows;
+        $stmt->close();
+
+        return $rowsUpdated;
+    }
+
+    public function updateQuizNumericQuestion(
+        $quizId,
+        $skillQuestionId,
+        $answer,
+        $correctUnaided,
+        $questionStartTime,
+        $questionEndTime
+    ) {
+        $sql = 'UPDATE quiz_questions
+                SET    answer = ?,
+                       correct_unaided = ?,
+                       started_at = ?,
+                       answered_at = ?
+                WHERE  quiz_id = ?
+                AND    skill_question_id = ?';
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->bind_param(
+            'dissii',
+            $answer,
             $correctUnaided,
             $questionStartTime,
             $questionEndTime,
@@ -323,6 +392,60 @@ class MysqlQuizzesRepository implements QuizzesRepository
                 WHERE  s.topic_id = ?';
         $stmt = $this->dbh->prepare($sql);
         $stmt->bind_param('i', $topicId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function findIncompleteCurriculumQuiz($curriculumId, $userId)
+    {
+        $sql = 'SELECT q.*
+                FROM   quizzes q
+                WHERE  q.curriculum_id = ?
+                AND    q.user_id = ?
+                AND    q.completed_at is NULL
+                AND    q.quiz_type_id = 3';
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->bind_param('ii', $curriculumId, $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        return $result->fetch_assoc();
+    }
+
+    public function findIncompleteCurriculumQuizInfo($curriculumId, $userId)
+    {
+        $sql = 'SELECT q.quiz_id,
+                       count(*) question_count
+                FROM   quizzes q
+                JOIN   quiz_questions qq ON qq.quiz_id = q.quiz_id
+                WHERE  q.curriculum_id = ?
+                AND    q.user_id = ?
+                AND    q.completed_at is NULL
+                AND    q.quiz_type_id = 3
+                GROUP BY q.quiz_id';
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->bind_param('ii', $curriculumId, $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        return $result->fetch_assoc();
+    }
+
+    public function getAllCurriculumQuestions($curriculumId)
+    {
+        $sql = 'SELECT sq.skill_question_id,
+                       sq.skill_id
+                FROM   skill_questions sq
+                JOIN   skills s on s.skill_id = sq.skill_id
+                JOIN   topics t on s.topic_id = t.topic_id
+                WHERE  t.curriculum_id = ?';
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->bind_param('i', $curriculumId);
         $stmt->execute();
         $result = $stmt->get_result();
         $stmt->close();

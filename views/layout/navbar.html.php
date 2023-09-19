@@ -5,10 +5,13 @@
     </button>
 
     <div class="collapse navbar-collapse d-lg-flex" id="mainNavBar">
-      <a class="navbar-brand col-lg-3 me-0" href="/">Cube Shack</a>
+      <a class="navbar-brand col-lg-3 me-0" href="/">MathsVoyage.com</a>
       <ul class="navbar-nav col-md-6 justify-content-lg-center">
         <li class="nav-item">
           <a class="nav-link px-4 <?= $activeLink == 'Home' ? 'active' : ''; ?>" href="/"><i class="bi bi-house"></i> Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link px-4 <?= $activeLink == 'Arithmetic' ? 'active' : ''; ?>" href="/arithmetic"><i class="bi bi-calculator"></i> Arithmetic</a>
         </li>
         <li class="nav-item">
           <a class="nav-link px-4 <?= $activeLink == 'Curricula' ? 'active' : ''; ?>" href="/curriculum"><i class="bi bi-table"></i> Curricula</a>

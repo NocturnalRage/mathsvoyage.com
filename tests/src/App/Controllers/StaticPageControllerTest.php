@@ -43,9 +43,9 @@ class StaticPageControllerTest extends TestCase
     {
         $response = $this->controller->home();
         $responseVars = $response->getVars();
-        $expectedPageTitle = 'Cube Shack';
+        $expectedPageTitle = 'MathsVoyage.com';
         $this->assertSame($expectedPageTitle, $responseVars['pageTitle']);
-        $expectedMetaDescription = 'A simple PHP framework';
+        $expectedMetaDescription = 'Let us help you along your maths journey';
         $this->assertSame($expectedMetaDescription, $responseVars['metaDescription']);
     }
 }

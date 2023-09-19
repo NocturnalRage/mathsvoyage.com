@@ -6,7 +6,7 @@ if (! function_exists('mix')) {
         static $manifest;
         $publicPath = '/public';
         if (empty($_SERVER['DOCUMENT_ROOT'])) {
-            $rootPath = '/srv/http/cubeshack.com/public';
+            $rootPath = '/srv/http/mathsvoyage.com/public';
         } else {
             $rootPath = $_SERVER['DOCUMENT_ROOT'];
         }

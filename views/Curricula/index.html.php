@@ -17,15 +17,26 @@ include __DIR__.'/../layout/navbar.html.php';
           <a href="/skills/new" class="btn btn-primary">
             <i class="bi bi-plus"></i> New Skill</a>
           <a href="/skill-questions/new" class="btn btn-primary">
-            <i class="bi bi-plus"></i> New Skill Question</a>
+            <i class="bi bi-plus"></i> New Skill Multiple Choice Question</a>
+          <a href="/skill-questions/newNumber" class="btn btn-primary">
+            <i class="bi bi-plus"></i> New Skill Number Question</a>
           <a href="/videos/new" class="btn btn-primary">
             <i class="bi bi-plus"></i> New Video</a>
           <a href="/worked-solutions/new" class="btn btn-primary">
             <i class="bi bi-plus"></i> New Worked Solution</a>
         <?php } ?>
         <hr />
-        <?php foreach ($curriculum as $c) { ?>
-          <h2><a href="/curriculum/<?= $this->esc($c['curriculum_slug']) ?>"><?= $this->esc($c['curriculum_name']) ?> Curriculum</a></h2>
+        <?php foreach ($curricula as $curriculum) { ?>
+          <h2><a href="/curriculum/<?= $this->esc($curriculum['curriculum_slug']) ?>"><?= $this->esc($curriculum['curriculum_name']) ?> Curriculum</a></h2>
+           <a class="btn btn-primary" href="/curriculum/<?= $this->esc($curriculum['curriculum_slug']); ?>/quiz/create"
+                    onclick="event.preventDefault();
+                    document.getElementById('create-curriculum-quiz-form-<?= $curriculum['curriculum_id']; ?>').submit();">
+                    Take <?= $this->esc($curriculum['curriculum_name']) ?> Quiz
+           </a>
+
+           <form id="create-curriculum-quiz-form-<?= $curriculum['curriculum_id']; ?>" action="/curriculum/<?= $this->esc($curriculum['curriculum_slug']); ?>/quiz/create" method="POST" style="display: none;">
+             <?php $this->crsfToken(); ?>
+           </form>
         <?php } ?>
       </div>
     </div>

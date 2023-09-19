@@ -3,18 +3,18 @@
 namespace App\Controllers;
 
 use App\Repositories\CurriculaRepository;
+use App\Repositories\QuizzesRepository;
 use Framework\Recaptcha\RecaptchaClient;
 
 class CurriculaController extends Controller
 {
     public function index(CurriculaRepository $curricula)
     {
-        $curriculum = $curricula->all();
         $this->response->setVars([
             'pageTitle' => 'Curricula',
             'metaDescription' => 'A list of all the courses on offer',
             'activeLink' => 'Curricula',
-            'curriculum' => $curriculum,
+            'curricula' => $curricula->all(),
         ]);
         $this->addSessionVar('flash');
 
@@ -155,6 +155,75 @@ class CurriculaController extends Controller
         }
 
         return $this->redirectTo('/curriculum/'.$this->request->post['slug']);
+    }
+
+    public function create_quiz(CurriculaRepository $curricula, QuizzesRepository $quizzes)
+    {
+        if (! $this->loggedIn()) {
+            return $this->redirectToLoginPage();
+        }
+
+        $curriculum = $curricula->findBySlugOrFail($this->request->post['curriculumSlug']);
+        $quizId = $this->getOrCreateQuiz($curriculum['curriculum_id'], $this->request->user['user_id'], $quizzes);
+
+        $redirect = '/curriculum/'.$this->request->post['curriculumSlug'].'/quiz';
+        $this->response->redirect($redirect);
+
+        return $this->response;
+    }
+
+    public function quiz(
+        CurriculaRepository $curricula,
+        QuizzesRepository $quizzes
+    ) {
+        if (! $this->loggedIn()) {
+            return $this->redirectTo('/login');
+        }
+        $curriculum = $curricula->findBySlugOrFail($this->request->get['curriculumSlug']);
+        $userId = $this->request->user['user_id'];
+        if ($quizInfo = $quizzes->findIncompleteCurriculumQuizInfo(
+            $curriculum['curriculum_id'],
+            $userId
+        )) {
+            $this->response->setView('Skills/quiz.html.php');
+            $this->response->setVars([
+                'pageTitle' => $curriculum['curriculum_name'].' Quiz',
+                'metaDescription' => 'Take a curriculum quiz to show what you have learnt.',
+                'activeLink' => 'Curricula',
+                'curriculum' => $curriculum,
+                'returnSlug' => '/curriculum',
+                'quizInfo' => $quizInfo,
+            ]);
+
+            return $this->response;
+        } else {
+            $redirect = '/curriculum';
+            $this->response->redirect($redirect);
+
+            return $this->response;
+        }
+    }
+
+    private function getOrCreateQuiz($curriculumId, $userId, $quizzes)
+    {
+        if ($quiz = $quizzes->findIncompleteCurriculumQuiz($curriculumId, $userId)) {
+            return $quiz['quiz_id'];
+        }
+        $questionBank = $quizzes->getAllCurriculumQuestions($curriculumId);
+        shuffle($questionBank);
+        $totalQuestions = 20;
+        $quizId = $quizzes->createCurriculumQuiz($curriculumId, $userId);
+        if ($totalQuestions > count($questionBank)) {
+            $totalQuestions = count($questionBank);
+        }
+        for ($i = 0; $i < $totalQuestions; $i++) {
+            $quizzes->createQuizQuestion(
+                $quizId,
+                $questionBank[$i]['skill_question_id']
+            );
+        }
+
+        return $quizId;
     }
 
     private function recaptchaInvalid($recaptcha)

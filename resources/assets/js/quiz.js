@@ -10,12 +10,15 @@ const progressContainer = document.getElementById('progress')
 const actionButton = document.getElementById('action')
 const crsfToken = quizContainer.getAttribute('data-crsf-token')
 const quizId = quizContainer.getAttribute('data-quiz-id')
-const topicSlug = quizContainer.getAttribute('data-topic-slug')
+const returnSlug = quizContainer.getAttribute('data-return-slug')
 
 const CHECK_ANSWER = 1
 const NEXT_QUESTION = 2
 const SHOW_SUMMARY = 3
 const DONE = 4
+
+const MULTIPLE_CHOICE = 1
+const NUMERIC = 2
 let state = CHECK_ANSWER
 
 let quizOptions = []
@@ -83,8 +86,10 @@ function fetchQuestions () {
 
 function askQuestion (currentQuestion) {
   questionStartTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
-  if (currentQuestion.skill_question_type_id === 1) {
+  if (currentQuestion.skill_question_type_id === MULTIPLE_CHOICE) {
     askMultipleChoiceQuestion(currentQuestion)
+  } else if (currentQuestion.skill_question_type_id === NUMERIC) {
+    askNumericQuestion(currentQuestion)
   }
 }
 
@@ -119,9 +124,37 @@ function askMultipleChoiceQuestion (currentQuestion) {
   radios.forEach(radio => radio.addEventListener('change', () => { actionButton.disabled = false }))
 }
 
+function askNumericQuestion (currentQuestion) {
+  const output = []
+  const answers = []
+
+  answers.push(
+        `<div class="form-floating mb-3">
+            <input class="form-control-lg" type="number" id="answer" name="answer${questionNo}">
+        </div>`
+  )
+  output.push(
+      `<p class="question_number text-right">Question ${questionNo + 1} of ${totalQuestions} </p>
+       <hr />
+       <div class="question">${currentQuestion.question}</div>`
+  )
+  if (currentQuestion.question_image != null) {
+    output.push(`<div class="question_image"><img src="/images/questions/${currentQuestion.question_image}" alt="${currentQuestion.question}"</div>`)
+  }
+  output.push(
+       `<hr />
+       <div class="answers">${answers.join('')}</div>`
+  )
+  quizContainer.innerHTML = output.join('')
+  const answerInput = document.getElementById('answer')
+  answerInput.addEventListener('input', () => { actionButton.disabled = false })
+}
+
 function checkAnswer (currentQuestion) {
-  if (currentQuestion.skill_question_type_id === 1) {
+  if (currentQuestion.skill_question_type_id === MULTIPLE_CHOICE) {
     checkMultipleChoiceAnswer(currentQuestion)
+  } else if (currentQuestion.skill_question_type_id === NUMERIC) {
+    checkNumericAnswer(currentQuestion)
   }
 }
 
@@ -158,7 +191,9 @@ function checkMultipleChoiceAnswer (currentQuestion) {
     questionEndTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
     recordResponse(
       currentQuestion.skill_question_id,
+      currentQuestion.skill_question_type_id,
       choice,
+      null,
       correctOrNot,
       questionStartTime,
       questionEndTime
@@ -207,7 +242,9 @@ function checkMultipleChoiceAnswer (currentQuestion) {
       questionEndTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
       recordResponse(
         currentQuestion.skill_question_id,
+        currentQuestion.skill_question_type_id,
         choice,
+        null,
         correctOrNot,
         questionStartTime,
         questionEndTime
@@ -220,6 +257,99 @@ function checkMultipleChoiceAnswer (currentQuestion) {
       }
     })
     radioButtons.forEach(element => { element.disabled = false })
+  }
+}
+
+function checkNumericAnswer (currentQuestion) {
+  const answer = parseFloat(document.getElementById('answer').value)
+
+  let correctOrNot = 0
+  if (answer === currentQuestion.answer) {
+    const box = actionButton.getBoundingClientRect()
+    const confettiX = (box.x + box.width / 2) / screen.width
+    const confettiY = (box.y + box.height / 2) / screen.height
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      startVelocity: 30,
+      gravity: 1.5,
+      origin: { x: confettiX, y: confettiY }
+    })
+    correctSound.play()
+    if (incorrectAttempts === 0 && !hintUsed) {
+      document.getElementById('dot' + questionNo).classList.remove('dot')
+      document.getElementById('dot' + questionNo).classList.add('dotCorrect')
+      correctUnaidedTotal++
+      correctOrNot = 1
+    }
+    questionEndTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
+    recordResponse(
+      currentQuestion.skill_question_id,
+      currentQuestion.skill_question_type_id,
+      null,
+      answer,
+      correctOrNot,
+      questionStartTime,
+      questionEndTime
+    )
+
+    feedbackContainer.innerHTML = `
+      <div class="alert alert-success alert-dismissible mt-2" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <h4 class="alert-heading"><i class="bi bi-check"></i> Well Done!</h4>
+        <p>Keep going!</p>
+      </div>`
+    moveOn()
+  } else {
+    let heading = 'Not quite yet...'
+    incorrectAttempts++
+    if (incorrectAttempts === 2) {
+      heading = 'Still not correct, yet...'
+    } else if (incorrectAttempts > 2) {
+      heading = 'Not yet. Keep persisting!'
+    }
+    feedbackContainer.innerHTML = `
+      <div class="alert alert-info alert-dismissible mt-2" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <h4 class="alert-heading"><i class="bi bi-repeat"></i> ${heading}</h4>
+        <p>Try again, <a id="hintLink" href="#">get help</a>, or <a id="skipLink" href="#">skip for now</a>.</p>
+      </div>`
+    if (currentQuestion.hints.length > 0) {
+      const hintLink = document.getElementById('hintLink')
+      hintLink.addEventListener('click', function (event) {
+        event.preventDefault()
+        hintUsed = true
+        const output = []
+        for (const hint in currentQuestion.hints) {
+          output.push(
+             `<h4>Hint ${parseInt(hint) + 1}</h4>
+              <p>${currentQuestion.hints[hint].hint}</p>
+              </div>`)
+        }
+        hintContainer.innerHTML = output.join('')
+        hintContainer.style.display = 'block'
+      })
+    }
+    const skipLink = document.getElementById('skipLink')
+    skipLink.addEventListener('click', function (event) {
+      event.preventDefault()
+      questionEndTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
+      recordResponse(
+        currentQuestion.skill_question_id,
+        currentQuestion.skill_question_type_id,
+        null,
+        answer,
+        correctOrNot,
+        questionStartTime,
+        questionEndTime
+      )
+      moveOn()
+      if (questionNo < totalQuestions) {
+        processClick()
+      } else {
+        feedbackContainer.innerHTML = ''
+      }
+    })
   }
 }
 
@@ -291,12 +421,19 @@ function processClick () {
       hundredPercentSound.play()
     }
   } else if (state === DONE) {
-    window.location.href = '/topics/' + topicSlug
+    window.location.href = returnSlug
   }
 }
 
-function recordResponse (skillQuestionId, choice, correctOrNot, questionStartTime, questionEndTime) {
-  const data = 'quizId=' + encodeURIComponent(quizId) + '&skillQuestionId=' + encodeURIComponent(skillQuestionId) + '&skillQuestionOptionId=' + encodeURIComponent(choice) + '&correctUnaided=' + encodeURIComponent(correctOrNot) + '&questionStartTime=' + encodeURIComponent(questionStartTime) + '&questionEndTime=' + encodeURIComponent(questionEndTime) + '&crsfToken=' + encodeURIComponent(crsfToken)
+// Choice is for multiple choice questions
+// answer is for numeric questions
+function recordResponse (skillQuestionId, skillQuestionTypeId, choice, answer, correctOrNot, questionStartTime, questionEndTime) {
+  let data
+  if (skillQuestionTypeId === 1) {
+    data = 'quizId=' + encodeURIComponent(quizId) + '&skillQuestionId=' + encodeURIComponent(skillQuestionId) + '&skillQuestionTypeId=' + encodeURIComponent(skillQuestionTypeId) + '&skillQuestionOptionId=' + encodeURIComponent(choice) + '&correctUnaided=' + encodeURIComponent(correctOrNot) + '&questionStartTime=' + encodeURIComponent(questionStartTime) + '&questionEndTime=' + encodeURIComponent(questionEndTime) + '&crsfToken=' + encodeURIComponent(crsfToken)
+  } else if (skillQuestionTypeId === 2) {
+    data = 'quizId=' + encodeURIComponent(quizId) + '&skillQuestionId=' + encodeURIComponent(skillQuestionId) + '&skillQuestionTypeId=' + encodeURIComponent(skillQuestionTypeId) + '&answer=' + encodeURIComponent(answer) + '&correctUnaided=' + encodeURIComponent(correctOrNot) + '&questionStartTime=' + encodeURIComponent(questionStartTime) + '&questionEndTime=' + encodeURIComponent(questionEndTime) + '&crsfToken=' + encodeURIComponent(crsfToken)
+  }
   const options = {
     method: 'POST',
     headers: {

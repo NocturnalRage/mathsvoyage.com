@@ -31,7 +31,7 @@ class PageNotFoundControllerTest extends TestCase
         );
         $this->response = $controller->index();
         $responseVars = $this->response->getVars();
-        $expectedPageTitle = 'Cube Shack | Page Not Found';
+        $expectedPageTitle = 'MathsVoyage.com | Page Not Found';
         $expectedMetaDescription = 'Whoops! We could not find the page your were looking for.';
         $this->assertSame($expectedPageTitle, $responseVars['pageTitle']);
         $this->assertSame($expectedMetaDescription, $responseVars['metaDescription']);

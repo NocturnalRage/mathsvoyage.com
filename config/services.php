@@ -96,6 +96,20 @@ $di->set('QuizzesController', function () use ($di) {
     );
 });
 
+$di->set('TimesTablesController', function () use ($di) {
+    return new App\Controllers\TimesTablesController(
+        $di->get('Request'),
+        $di->get('Response')
+    );
+});
+
+$di->set('GeneralArithmeticController', function () use ($di) {
+    return new App\Controllers\GeneralArithmeticController(
+        $di->get('Request'),
+        $di->get('Response')
+    );
+});
+
 /* Repositories start here */
 $di->set('dbh', function () {
     return new \Mysqli(
@@ -139,6 +153,14 @@ $di->set('WorkedSolutionsRepository', function () use ($di) {
 
 $di->set('TopicsRepository', function () use ($di) {
     return new App\Repositories\MysqlTopicsRepository($di->get('dbh'));
+});
+
+$di->set('TimesTablesRepository', function () use ($di) {
+    return new App\Repositories\MysqlTimesTablesRepository($di->get('dbh'));
+});
+
+$di->set('GeneralArithmeticRepository', function () use ($di) {
+    return new App\Repositories\MysqlGeneralArithmeticRepository($di->get('dbh'));
 });
 
 $di->set('ReCaptcha', function () {

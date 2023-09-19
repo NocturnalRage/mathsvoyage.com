@@ -2,7 +2,7 @@
 <phpunit bootstrap="vendor/autoload.php"
          colors="true">
     <testsuites>
-        <testsuite name="cubeshack">
+        <testsuite name="mathsvoyage">
             <directory>./tests/src/App</directory>
             <directory>./tests/src/Framework</directory>
             <directory>./tests/views</directory>

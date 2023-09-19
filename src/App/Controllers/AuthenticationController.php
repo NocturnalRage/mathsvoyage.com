@@ -237,8 +237,8 @@ class AuthenticationController extends Controller
     public function registerThanks()
     {
         $this->response->setVars([
-            'pageTitle' => 'Thanks for joining Cube Shack',
-            'metaDescription' => 'Thanks for joining the Cube Shack website.',
+            'pageTitle' => 'Thanks for joining MathsVoyage.com',
+            'metaDescription' => 'Thanks for joining the MathsVoyage.com website.',
             'activeLink' => 'Register',
         ]);
 

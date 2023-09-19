@@ -298,6 +298,11 @@ class Request
                         $errors[$field] = 'Not an integer';
                         break;
                     }
+                } elseif ($rule == 'int') {
+                    if (filter_var($this->request[$field], FILTER_VALIDATE_FLOAT) === false) {
+                        $errors[$field] = 'Not a float';
+                        break;
+                    }
                 }
             }
         }

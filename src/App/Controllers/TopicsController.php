@@ -159,6 +159,7 @@ class TopicsController extends Controller
                 'activeLink' => 'Curricula',
                 'curriculum' => $curriculum,
                 'topic' => $topic,
+                'returnSlug' => '/topics/'.$curriculum['curriculum_slug'].'/'.$topic['slug'],
                 'quizInfo' => $quizInfo,
             ]);
 

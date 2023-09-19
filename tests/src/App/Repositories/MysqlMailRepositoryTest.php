@@ -33,10 +33,10 @@ class MysqlMailRepositoryTest extends TestCase
 
     public function testMailRepositoryFunctions()
     {
-        $fromEmail = 'website@cubeshack.com';
-        $replyEmail = 'website@cubeshack.com';
+        $fromEmail = 'website@mathsvoyage.com';
+        $replyEmail = 'website@mathsvoyage.com';
         $toEmail = 'johndoe@example.com';
-        $subject = 'Cube Shack Website';
+        $subject = 'MathsVoyage.com Website';
         $bodyText = 'It looks good';
         $bodyHtml = '<p>It looks good</p>';
 

@@ -92,7 +92,7 @@ ENDIMG;
         return $imgTxt;
     }
 
-    public function addEmailButton($buttonText, $link = 'https://www.cubeshack.com', $buttonColour = '#348eda')
+    public function addEmailButton($buttonText, $link = 'https://www.MathsVoyage.com', $buttonColour = '#348eda')
     {
         $button = <<<ENDBUTTON
 <table style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6; width: 100%; margin: 0; padding: 0;"><tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6; margin: 0; padding: 0;"><td class="padding" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6; margin: 0; padding: 10px 0;">
@@ -149,7 +149,7 @@ ENDEMAIL;
 			<div class="content" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6; max-width: 600px; display: block; margin: 0 auto; padding: 0;">
 				<table style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6; width: 100%; margin: 0; padding: 0;"><tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6; margin: 0; padding: 0;"><td align="center" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6; margin: 0; padding: 0;">
 <table style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6; width: 100%; margin: 0; padding: 0;"><tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6; margin: 0; padding: 0;"><td class="padding" style="text-align: center; vertical-align: top; font-size: 0;">
-									<a href="https://www.cubeshack.com/" style="text-decoration: none; font-weight: bold; text-align: center;"><img src="https://www.cubeshack.com/images/logos/cubeshack-logo.png" alt="Cubeshack - Simple PHP Framework" style="border-style: none" /></a>
+									<a href="https://www.MathsVoyage.com/" style="text-decoration: none; font-weight: bold; text-align: center;"><img src="https://www.MathsVoyage.com/images/logos/mathsvoyage-logo.png" alt="MathsVoyage.com - Let us help you along your maths journey" style="border-style: none" /></a>
 								</td>
 							</tr></table>
 							<p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 12px; line-height: 1.6; color: #666; font-weight: normal; margin: 0 0 10px; padding: 0;">$message

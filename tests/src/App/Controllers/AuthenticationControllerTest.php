@@ -98,7 +98,7 @@ class AuthenticationControllerTest extends TestCase
     {
         $recaptchaResponse = 'Fake Response';
         $ipAddress = '127.0.0.1';
-        $serverName = 'cubeshack.com';
+        $serverName = 'mathsvoyage.com';
         $this->request->server['REMOTE_ADDR'] = $ipAddress;
         $this->request->server['SERVER_NAME'] = $serverName;
         $this->expectException('Framework\ValidationException');
@@ -587,8 +587,8 @@ class AuthenticationControllerTest extends TestCase
         $this->loginUser();
         $response = $this->controller->registerThanks();
         $responseVars = $this->response->getVars();
-        $expectedPageTitle = 'Thanks for joining Cube Shack';
-        $expectedMetaDescription = 'Thanks for joining the Cube Shack website.';
+        $expectedPageTitle = 'Thanks for joining MathsVoyage.com';
+        $expectedMetaDescription = 'Thanks for joining the MathsVoyage.com website.';
         $this->assertSame($expectedPageTitle, $responseVars['pageTitle']);
         $this->assertSame($expectedMetaDescription, $responseVars['metaDescription']);
     }

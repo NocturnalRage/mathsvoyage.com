@@ -144,13 +144,13 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
         // prep
         $this->response->setBase($this->base);
         $this->response->setView($this->crsfview);
-        $this->response->setVars(['noun' => 'Cube Shack', 'crsfToken' => 'token']);
+        $this->response->setVars(['noun' => 'Maths Voyage', 'crsfToken' => 'token']);
         // send
         ob_start();
         $this->response->send();
         $output = ob_get_clean();
         // test
-        $this->assertStringContainsString('Hello Cube Shack!', $output);
+        $this->assertStringContainsString('Hello Maths Voyage!', $output);
         //$this->assertStringContainsString('<input type="hidden" name="crsfToken" value="token" />', $output);
     }
 }
