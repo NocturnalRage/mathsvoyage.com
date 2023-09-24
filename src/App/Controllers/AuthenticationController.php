@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Emails\ActivateMembershipEmail;
+use App\Emails\ForgotPasswordEmail;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
 use Framework\Recaptcha\RecaptchaClient;
@@ -261,6 +262,155 @@ class AuthenticationController extends Controller
         return $this->response;
     }
 
+    public function password()
+    {
+        if (! $this->loggedIn()) {
+            return $this->redirectToLoginForm();
+        }
+        $this->response->setVars([
+            'pageTitle' => 'Change My Password',
+            'metaDescription' => 'Change your password.',
+            'activeLink' => 'password',
+        ]);
+        $this->addSessionVar('errors');
+        $this->addSessionVar('formVars');
+        $this->addSessionVar('flash');
+
+        return $this->response;
+    }
+
+    public function forgot_password()
+    {
+        if ($this->loggedIn()) {
+            return $this->redirectTo('/');
+        }
+        $this->response->setVars([
+            'pageTitle' => 'Forgot Password',
+            'metaDescription' => "You've forgotten your password. No problems, we can reset it for you.",
+            'activeLink' => 'password',
+        ]);
+        $this->addSessionVar('errors');
+        $this->addSessionVar('formVars');
+        $this->addSessionVar('flash');
+
+        return $this->response;
+    }
+
+    public function password_validate(UserRepository $users)
+    {
+        if (! $this->loggedIn()) {
+            return $this->redirectToLoginForm();
+        }
+        $this->request->validate([
+            'loginPassword' => ['required', 'min:6', 'max:100'],
+        ]);
+        $users->updatePassword(
+            $this->request->user['user_id'],
+            $this->request->post['loginPassword'],
+        );
+        $this->request->flash('Your password has been changed.', 'success');
+
+        return $this->redirectTo('/profile');
+    }
+
+    public function forgot_password_validate(
+        UserRepository $users,
+        ForgotPasswordEmail $forgotPasswordEmail,
+    ) {
+        if ($this->loggedIn()) {
+            return $this->redirectTo('/');
+        }
+        $this->request->validate([
+            'email' => ['required', 'email'],
+        ]);
+        if (! $user = $users->findByEmail($this->request->post['email'])) {
+            return $this->redirectTo('/');
+        }
+        $token = bin2hex(random_bytes(32));
+        $result = $users->insertPasswordResetRequest(
+            $user['user_id'], $token
+        );
+        $mailInfo = [
+            'requestScheme' => $this->request->server['REQUEST_SCHEME'],
+            'serverName' => $this->request->server['SERVER_NAME'],
+            'token' => $token,
+            'givenName' => $user['given_name'],
+            'toEmail' => $this->request->post['email'],
+        ];
+        $forgotPasswordEmail->sendEmail($mailInfo);
+        $location = '/forgot-password-confirm?email='.urlencode($this->request->post['email']);
+
+        return $this->redirectTo($location);
+    }
+
+    public function forgot_password_confirm()
+    {
+        if ($this->loggedIn()) {
+            return $this->redirectTo('/');
+        }
+        if (empty($this->request->get['email'])) {
+            return $this->redirectTo('/forgot-password');
+        }
+        $this->response->setVars([
+            'pageTitle' => 'Request Link Sent',
+            'metaDescription' => 'If we have the email you entered in our system then a message has been sent with a password reset link.',
+            'activeLink' => 'password',
+            'email' => $this->request->get['email'],
+        ]);
+
+        return $this->response;
+    }
+
+    public function reset_password(UserRepository $users)
+    {
+        if ($this->loggedIn()) {
+            return $this->redirectTo('/');
+        }
+
+        if (! $this->resetTokenIsValid($users, $this->request->get['token'])) {
+            return $this->redirectTo('/forgot-password');
+        }
+
+        $this->response->setVars([
+            'pageTitle' => 'Reset Password',
+            'metaDescription' => 'Enter your new password.',
+            'activeLink' => 'password',
+            'token' => $this->request->get['token'],
+        ]);
+        $this->addSessionVar('errors');
+        $this->addSessionVar('formVars');
+        $this->addSessionVar('flash');
+
+        return $this->response;
+    }
+
+    public function reset_password_validate(UserRepository $users)
+    {
+        if ($this->loggedIn()) {
+            return $this->redirectTo('/password');
+        }
+        if (empty($this->request->post['token'])) {
+            return $this->redirectTo('/forgot-password');
+        }
+        if (! $passwordRequest = $users->getPasswordResetRequest($this->request->post['token'])) {
+            return $this->redirectTo('/forgot-password');
+        }
+        $this->request->validate([
+            'loginPassword' => ['required', 'min:6', 'max:100'],
+        ]);
+        $users->updatePassword(
+            $passwordRequest['user_id'],
+            $this->request->post['loginPassword']
+        );
+        $users->processPasswordResetRequest(
+            $passwordRequest['user_id'],
+            $this->request->post['token']
+        );
+        $this->request->flash('Your password has been changed. Please login.', 'success');
+
+        return $this->redirectTo('/login');
+    }
+
     public function profileEdit(RecaptchaClient $recaptcha)
     {
         if (! $this->loggedIn()) {
@@ -447,6 +597,19 @@ class AuthenticationController extends Controller
             $users->createSubscriber($listId, $userId);
         } else {
             $users->updateSubscriber($listId, $userId, $activeStatus);
+        }
+    }
+
+    private function resetTokenIsValid($users, $token)
+    {
+        if (empty($token)) {
+            return false;
+        }
+        $resetRequest = $users->getPasswordResetRequest($token);
+        if ($resetRequest) {
+            return true;
+        } else {
+            return false;
         }
     }
 }

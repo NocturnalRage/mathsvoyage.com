@@ -18,7 +18,7 @@ class GeneralArithmeticController extends Controller
             'pageTitle' => 'General Arithmetic',
             'metaDescription' => 'Practice your general arithmetic',
             'activeLink' => 'Arithmetic',
-            'scores' => $scores
+            'scores' => $scores,
         ]);
 
         return $this->response;
@@ -35,7 +35,7 @@ class GeneralArithmeticController extends Controller
             'pageTitle' => 'General Arithmetic Quiz',
             'metaDescription' => 'Take a general arithmetic quiz.',
             'activeLink' => 'Arithmetic',
-            'questionCount' => 20
+            'questionCount' => 20,
         ]);
 
         return $this->response;
@@ -60,6 +60,7 @@ class GeneralArithmeticController extends Controller
                 'status' => json_encode('error'),
                 'message' => json_encode('You must provide a score to record.'),
             ]);
+
             return $this->response;
         }
 
@@ -68,6 +69,7 @@ class GeneralArithmeticController extends Controller
                 'status' => json_encode('error'),
                 'message' => json_encode('You must provide a question count to record.'),
             ]);
+
             return $this->response;
         }
 
@@ -76,6 +78,7 @@ class GeneralArithmeticController extends Controller
                 'status' => json_encode('error'),
                 'message' => json_encode('You must provide a start time to record.'),
             ]);
+
             return $this->response;
         }
 
@@ -84,6 +87,7 @@ class GeneralArithmeticController extends Controller
                 'status' => json_encode('error'),
                 'message' => json_encode('You must provide an end time to record.'),
             ]);
+
             return $this->response;
         }
 
