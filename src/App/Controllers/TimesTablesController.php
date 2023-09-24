@@ -15,12 +15,14 @@ class TimesTablesController extends Controller
         }
         $attempt = $this->getOrCreateAttempt($times);
         $scores = $times->getScoresForAttempt($attempt['id']);
+        $pastScores = $times->getPastScores($this->request->user['user_id']);
         $this->response->setVars([
             'pageTitle' => 'Times Tables',
             'metaDescription' => 'Practice your times tables',
             'activeLink' => 'Arithmetic',
             'attempt' => $attempt,
             'scores' => $scores,
+            'pastScores' => $pastScores,
         ]);
 
         return $this->response;

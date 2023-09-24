@@ -121,7 +121,7 @@ function askMultipleChoiceQuestion (currentQuestion) {
   )
   quizContainer.innerHTML = output.join('')
   const radios = document.querySelectorAll('input[name="question' + questionNo + '"]')
-  radios.forEach(radio => radio.addEventListener('change', () => { actionButton.disabled = false }))
+  radios.forEach(radio => radio.addEventListener('change', () => { actionButton.disabled = false; actionButton.focus() }))
 }
 
 function askNumericQuestion (currentQuestion) {
@@ -148,6 +148,8 @@ function askNumericQuestion (currentQuestion) {
   quizContainer.innerHTML = output.join('')
   const answerInput = document.getElementById('answer')
   answerInput.addEventListener('input', () => { actionButton.disabled = false })
+  answerInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !actionButton.disabled) { processClick() } })
+  answerInput.focus()
 }
 
 function checkAnswer (currentQuestion) {

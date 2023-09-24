@@ -150,6 +150,7 @@ function askQuestion () {
   quizContainer.innerHTML = output.join('')
   const answerInput = document.getElementById('answer')
   answerInput.addEventListener('input', () => { actionButton.disabled = false })
+  answerInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !actionButton.disabled) { processClick() } })
   answerInput.focus()
 }
 

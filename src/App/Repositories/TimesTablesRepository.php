@@ -19,4 +19,6 @@ interface TimesTablesRepository
     public function incrementTimesTable($attemptId);
 
     public function recordScore($attemptId, $timesTablesId, $attempt, $score, $startTime, $endTime);
+
+    public function getPastScores($userId);
 }
