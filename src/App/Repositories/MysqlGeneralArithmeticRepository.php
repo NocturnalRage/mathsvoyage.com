@@ -17,7 +17,7 @@ class MysqlGeneralArithmeticRepository implements GeneralArithmeticRepository
                        correct,
                        question_count,
                        round(correct/question_count * 100) as percentage,
-                       completed_at - started_at as seconds
+                       TIMESTAMPDIFF(SECOND, started_at, completed_at) as seconds
                 FROM   general_arithmetic_scores
                 WHERE  user_id = ?
                 ORDER BY completed_at desc';
