@@ -7,6 +7,7 @@ include __DIR__.'/../layout/navbar.html.php';
       <?php include 'profile-menu.html.php'; ?>
       <div class="col-md-9">
         <h1><?= $user['given_name'].' '.$user['family_name']; ?></h1>
+        <?php include __DIR__.'/../layout/flash.html.php'; ?>
         <p>Email: <?= $this->esc($user['email']) ?></p>
         <p>Joined <?= $this->esc($user['memberSince']) ?></p>
         <div>

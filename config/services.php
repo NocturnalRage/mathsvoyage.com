@@ -203,3 +203,12 @@ $di->set('ActivateMembershipEmail', function () use ($di) {
         $_ENV['SUPPORT_EMAIL']
     );
 });
+
+$di->set('ForgotPasswordEmail', function () use ($di) {
+    return new App\Emails\ForgotPasswordEmail(
+        $di->get('EmailTemplate'),
+        $di->get('MailRepository'),
+        $di->get('Mailer'),
+        $_ENV['SUPPORT_EMAIL']
+    );
+});

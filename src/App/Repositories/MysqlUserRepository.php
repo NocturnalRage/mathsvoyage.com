@@ -223,10 +223,10 @@ class MysqlUserRepository implements UserRepository
 
     public function insertPasswordResetRequest($userId, $token)
     {
-        $sql = 'insert into password_reset_request
-            (user_id, token, processed, created_at, processed_at)
+        $sql = 'insert into password_reset_requests
+            (user_id, token, created_at, processed_at)
             values
-            (?, ?, 0, now(), NULL)';
+            (?, ?, now(), NULL)';
         $stmt = $this->dbh->prepare($sql);
         $stmt->bind_param('is', $userId, $token);
         $stmt->execute();
@@ -238,10 +238,10 @@ class MysqlUserRepository implements UserRepository
 
     public function getPasswordResetRequest($token)
     {
-        $sql = 'SELECT user_id, processed, created_at
-            FROM   password_reset_request
+        $sql = 'SELECT user_id, processed_at, created_at
+            FROM   password_reset_requests
             WHERE  token = ?
-            AND    processed = 0
+            AND    processed_at is NULL
             AND    created_at > date_sub(now(), INTERVAL 24 HOUR)';
         $stmt = $this->dbh->prepare($sql);
         $stmt->bind_param('s', $token);
@@ -254,9 +254,8 @@ class MysqlUserRepository implements UserRepository
 
     public function processPasswordResetRequest($userId, $token)
     {
-        $sql = 'update password_reset_request
-            set    processed = 1,
-                   processed_at = now()
+        $sql = 'update password_reset_requests
+            set    processed_at = now()
             where  user_id = ?
             and    token = ?';
         $stmt = $this->dbh->prepare($sql);

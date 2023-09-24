@@ -26,6 +26,7 @@ class MysqlGeneralArithmeticRepository implements GeneralArithmeticRepository
         $stmt->execute();
         $result = $stmt->get_result();
         $stmt->close();
+
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
@@ -44,6 +45,7 @@ class MysqlGeneralArithmeticRepository implements GeneralArithmeticRepository
         $stmt->bind_param('iiiss', $userId, $correct, $questionCount, $startTime, $endTime);
         $stmt->execute();
         $stmt->close();
+
         return $this->dbh->insert_id;
     }
 }
