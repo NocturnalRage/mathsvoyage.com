@@ -27,16 +27,27 @@ include __DIR__.'/../layout/navbar.html.php';
         <?php } ?>
         <hr />
         <?php foreach ($curricula as $curriculum) { ?>
-          <h2><a href="/curriculum/<?= $this->esc($curriculum['curriculum_slug']) ?>"><?= $this->esc($curriculum['curriculum_name']) ?> Curriculum</a></h2>
-           <a class="btn btn-primary" href="/curriculum/<?= $this->esc($curriculum['curriculum_slug']); ?>/quiz/create"
-                    onclick="event.preventDefault();
-                    document.getElementById('create-curriculum-quiz-form-<?= $curriculum['curriculum_id']; ?>').submit();">
-                    Take <?= $this->esc($curriculum['curriculum_name']) ?> Quiz
-           </a>
+          <div class="card">
+            <div class="card-body">
+              <h2 class="card-title">
+                <a href="/curriculum/<?= $this->esc($curriculum['curriculum_slug']) ?>">
+                  <?= $this->esc($curriculum['curriculum_name']) ?> Curriculum
+                </a>
+              </h2>
+              <p>
+                <a class="btn btn-primary"
+                   href="/curriculum/<?= $this->esc($curriculum['curriculum_slug']); ?>/quiz/create"
+                   onclick="event.preventDefault();
+                            document.getElementById('create-curriculum-quiz-form-<?= $curriculum['curriculum_id']; ?>').submit();">
+                  Take <?= $this->esc($curriculum['curriculum_name']) ?> Quiz
+                </a>
+              </p>
+            </div>
+          </div>
 
-           <form id="create-curriculum-quiz-form-<?= $curriculum['curriculum_id']; ?>" action="/curriculum/<?= $this->esc($curriculum['curriculum_slug']); ?>/quiz/create" method="POST" style="display: none;">
-             <?php $this->crsfToken(); ?>
-           </form>
+          <form id="create-curriculum-quiz-form-<?= $curriculum['curriculum_id']; ?>" action="/curriculum/<?= $this->esc($curriculum['curriculum_slug']); ?>/quiz/create" method="POST" style="display: none;">
+            <?php $this->crsfToken(); ?>
+          </form>
         <?php } ?>
       </div>
     </div>

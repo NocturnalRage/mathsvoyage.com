@@ -23,6 +23,15 @@ include __DIR__.'/../layout/navbar.html.php';
                 </a> 
               </h2>
               <p><?= $this->esc($topic['percent_complete']); ?>% mastered</p>
+
+           <a class="btn btn-primary" href="/topics/<?= $this->esc($curriculum['curriculum_slug'].'/'.$topic['slug']); ?>/quiz/create"
+                    onclick="event.preventDefault();
+                    document.getElementById('create-topic-quiz-form').submit();">
+                    Take <?= $this->esc($topic['title']) ?> Quiz
+           </a>
+           <form id="create-topic-quiz-form" action="/topics/<?= $this->esc($curriculum['curriculum_slug'].'/'.$topic['slug']); ?>/quiz/create" method="POST" style="display: none;">
+             <?php $this->crsfToken(); ?>
+           </form>
             </div>
           </div>
         <?php } ?>
