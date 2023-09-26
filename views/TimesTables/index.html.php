@@ -13,7 +13,7 @@ include __DIR__.'/../layout/navbar.html.php';
         <p>Current Times Table: <?= $this->esc($attempt['title']); ?></p>
         <p>Current Attempt: <?= $this->esc($attempt['attempt']); ?></p>
         <a href="/times-tables/quiz" class="btn btn-primary">Start Next Attempt</a>
-        <?php if ($scores): ?>
+        <?php if ($scores) { ?>
           <hr />
           <h1>Scores</h1>
           <table class="table">
@@ -38,8 +38,8 @@ include __DIR__.'/../layout/navbar.html.php';
               <?php } ?>
             </tbody>
           </table>
-        <?php endif; ?>
-        <?php if ($pastScores): ?>
+        <?php } ?>
+        <?php if ($pastScores) { ?>
           <hr />
           <h1>Past Scores</h1>
           <table class="table">
@@ -64,7 +64,7 @@ include __DIR__.'/../layout/navbar.html.php';
               <?php } ?>
             </tbody>
           </table>
-        <?php endif; ?>
+        <?php } ?>
       </div>
     </div>
 <?php

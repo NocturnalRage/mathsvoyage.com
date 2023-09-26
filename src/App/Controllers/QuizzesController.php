@@ -68,12 +68,10 @@ class QuizzesController extends Controller
         $currentSkillQuestionId = $options[0]['skill_question_id'];
         $currentSkillQuestionTypeId = $options[0]['skill_question_type_id'];
         $currentAnswer = $options[0]['answer'];
+        $currentHelpSlug = $options[0]['help_slug'];
 
         foreach ($options as $option) {
             if ($option['skill_question_id'] != $currentSkillQuestionId) {
-                $hints = $quizzes->getSkillQuestionHints(
-                    $currentSkillQuestionId
-                );
                 $quizOptions[] = [
                     'question' => $currentQuestion,
                     'question_image' => $currentQuestionImage,
@@ -81,7 +79,7 @@ class QuizzesController extends Controller
                     'skill_question_type_id' => $currentSkillQuestionTypeId,
                     'answer' => $currentAnswer,
                     'answers' => $quizOption,
-                    'hints' => $hints,
+                    'help_slug' => $currentHelpSlug,
                 ];
                 $quizOption = [];
                 $currentQuestion = $option['question'];
@@ -89,6 +87,7 @@ class QuizzesController extends Controller
                 $currentSkillQuestionId = $option['skill_question_id'];
                 $currentSkillQuestionTypeId = $option['skill_question_type_id'];
                 $currentAnswer = $option['answer'];
+                $currentHelpSlug = $options[0]['help_slug'];
             }
             $quizOption[] = [
                 'skill_question_option_id' => $option['skill_question_option_id'],
@@ -97,9 +96,6 @@ class QuizzesController extends Controller
                 'correct' => $option['correct'],
             ];
         }
-        $hints = $quizzes->getSkillQuestionHints(
-            $currentSkillQuestionId
-        );
         $quizOptions[] = [
             'question' => $currentQuestion,
             'question_image' => $currentQuestionImage,
@@ -107,7 +103,7 @@ class QuizzesController extends Controller
             'skill_question_type_id' => $currentSkillQuestionTypeId,
             'answer' => $currentAnswer,
             'answers' => $quizOption,
-            'hints' => $hints,
+            'help_slug' => $currentHelpSlug,
         ];
 
         // Give questions in random order

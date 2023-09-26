@@ -4,7 +4,6 @@ import confetti from 'canvas-confetti'
 const startButton = document.getElementById('startBtn')
 const instructions = document.getElementById('instructions')
 const quizContainer = document.getElementById('quiz')
-const hintContainer = document.getElementById('hint')
 const feedbackContainer = document.getElementById('feedback')
 const progressContainer = document.getElementById('progress')
 const actionButton = document.getElementById('action')
@@ -25,7 +24,7 @@ let quizOptions = []
 let questionNo = 0
 let totalQuestions = 0
 let incorrectAttempts = 0
-let hintUsed = false
+let helpUsed = false
 let correctUnaidedTotal = 0
 const quizStartTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
 let quizEndTime
@@ -184,7 +183,7 @@ function checkMultipleChoiceAnswer (currentQuestion) {
       origin: { x: confettiX, y: confettiY }
     })
     correctSound.play()
-    if (incorrectAttempts === 0 && !hintUsed) {
+    if (incorrectAttempts === 0 && !helpUsed) {
       document.getElementById('dot' + questionNo).classList.remove('dot')
       document.getElementById('dot' + questionNo).classList.add('dotCorrect')
       correctUnaidedTotal++
@@ -220,24 +219,14 @@ function checkMultipleChoiceAnswer (currentQuestion) {
       <div class="alert alert-info alert-dismissible mt-2" role="alert">
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         <h4 class="alert-heading"><i class="bi bi-repeat"></i> ${heading}</h4>
-        <p>Try again, <a id="hintLink" href="#">get help</a>, or <a id="skipLink" href="#">skip for now</a>.</p>
+        <p>Try again, <a id="helpLink" href="#">get help</a>, or <a id="skipLink" href="#">skip for now</a>.</p>
       </div>`
-    if (currentQuestion.hints.length > 0) {
-      const hintLink = document.getElementById('hintLink')
-      hintLink.addEventListener('click', function (event) {
-        event.preventDefault()
-        hintUsed = true
-        const output = []
-        for (const hint in currentQuestion.hints) {
-          output.push(
-             `<h4>Hint ${parseInt(hint) + 1}</h4>
-              <p>${currentQuestion.hints[hint].hint}</p>
-              </div>`)
-        }
-        hintContainer.innerHTML = output.join('')
-        hintContainer.style.display = 'block'
-      })
-    }
+    const helpLink = document.getElementById('helpLink')
+    helpLink.addEventListener('click', function (event) {
+      event.preventDefault()
+      helpUsed = true
+      window.open(currentQuestion.help_slug)
+    })
     const skipLink = document.getElementById('skipLink')
     skipLink.addEventListener('click', function (event) {
       event.preventDefault()
@@ -278,7 +267,7 @@ function checkNumericAnswer (currentQuestion) {
       origin: { x: confettiX, y: confettiY }
     })
     correctSound.play()
-    if (incorrectAttempts === 0 && !hintUsed) {
+    if (incorrectAttempts === 0 && !helpUsed) {
       document.getElementById('dot' + questionNo).classList.remove('dot')
       document.getElementById('dot' + questionNo).classList.add('dotCorrect')
       correctUnaidedTotal++
@@ -314,24 +303,14 @@ function checkNumericAnswer (currentQuestion) {
       <div class="alert alert-info alert-dismissible mt-2" role="alert">
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         <h4 class="alert-heading"><i class="bi bi-repeat"></i> ${heading}</h4>
-        <p>Try again, <a id="hintLink" href="#">get help</a>, or <a id="skipLink" href="#">skip for now</a>.</p>
+        <p>Try again, <a id="helpLink" href="#">get help</a>, or <a id="skipLink" href="#">skip for now</a>.</p>
       </div>`
-    if (currentQuestion.hints.length > 0) {
-      const hintLink = document.getElementById('hintLink')
-      hintLink.addEventListener('click', function (event) {
-        event.preventDefault()
-        hintUsed = true
-        const output = []
-        for (const hint in currentQuestion.hints) {
-          output.push(
-             `<h4>Hint ${parseInt(hint) + 1}</h4>
-              <p>${currentQuestion.hints[hint].hint}</p>
-              </div>`)
-        }
-        hintContainer.innerHTML = output.join('')
-        hintContainer.style.display = 'block'
-      })
-    }
+    const helpLink = document.getElementById('helpLink')
+    helpLink.addEventListener('click', function (event) {
+      event.preventDefault()
+      helpUsed = true
+      window.open(currentQuestion.help_slug)
+    })
     const skipLink = document.getElementById('skipLink')
     skipLink.addEventListener('click', function (event) {
       event.preventDefault()
@@ -357,7 +336,6 @@ function checkNumericAnswer (currentQuestion) {
 
 function moveOn () {
   // Next question or show summary
-  hintContainer.style.display = 'none'
   questionNo++
   if (questionNo >= totalQuestions) {
     quizEndTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
@@ -369,7 +347,7 @@ function moveOn () {
     state = NEXT_QUESTION
     actionButton.innerHTML = 'Next Question'
     incorrectAttempts = 0
-    hintUsed = false
+    helpUsed = false
   }
 }
 

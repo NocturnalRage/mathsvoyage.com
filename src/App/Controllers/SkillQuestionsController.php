@@ -68,9 +68,6 @@ class SkillQuestionsController extends Controller
             'option2' => ['required', 'max:1000'],
             'option3' => ['required', 'max:1000'],
             'option4' => ['required', 'max:1000'],
-            'hint1' => ['required', 'max:1000'],
-            'hint2' => ['required', 'max:1000'],
-            'hint3' => ['required', 'max:1000'],
         ]);
 
         $skillQuestionId = $skillQuestions->create(
@@ -127,22 +124,6 @@ class SkillQuestionsController extends Controller
             $this->request->post['correctOption'] == '4' ? 1 : 0
         );
 
-        $hintId = $skillQuestions->createHint(
-            $skillQuestionId,
-            $this->request->post['hint1'],
-            1
-        );
-        $hintId = $skillQuestions->createHint(
-            $skillQuestionId,
-            $this->request->post['hint2'],
-            2
-        );
-        $hintId = $skillQuestions->createHint(
-            $skillQuestionId,
-            $this->request->post['hint3'],
-            3
-        );
-
         return $this->redirectTo('/curriculum');
     }
 
@@ -160,9 +141,6 @@ class SkillQuestionsController extends Controller
             'question' => ['required', 'max:8000'],
             'skill_id' => ['required', 'int'],
             'answer' => ['required', 'float'],
-            'hint1' => ['required', 'max:1000'],
-            'hint2' => ['required', 'max:1000'],
-            'hint3' => ['required', 'max:1000'],
         ]);
 
         $skillQuestionId = $skillQuestions->create(
@@ -197,22 +175,6 @@ class SkillQuestionsController extends Controller
         $skillQuestionNumberId = $skillQuestions->createNumber(
             $skillQuestionId,
             $this->request->post['answer']
-        );
-
-        $hintId = $skillQuestions->createHint(
-            $skillQuestionId,
-            $this->request->post['hint1'],
-            1
-        );
-        $hintId = $skillQuestions->createHint(
-            $skillQuestionId,
-            $this->request->post['hint2'],
-            2
-        );
-        $hintId = $skillQuestions->createHint(
-            $skillQuestionId,
-            $this->request->post['hint3'],
-            3
         );
 
         return $this->redirectTo('/curriculum');
