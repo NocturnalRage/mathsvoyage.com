@@ -314,4 +314,30 @@ class MysqlUserRepository implements UserRepository
 
         return $result->fetch_assoc();
     }
+
+    public function getQuizResultsSummary($userId)
+    {
+        $sql = 'SELECT c.curriculum_name,
+                       t.title as topic_title,
+                       s.title as skill_title,
+                       sum(qq.correct_unaided) as correct_unaided,
+                       count(*) as question_count,
+                       round(sum(qq.correct_unaided) / count(*) * 100) as percentage
+                FROM   quiz_questions qq
+                JOIN   quizzes q on q.quiz_id = qq.quiz_id
+                JOIN   skill_questions sq on sq.skill_question_id = qq.skill_question_id
+                JOIN   skills s on s.skill_id = sq.skill_id
+                JOIN   topics t on t.topic_id = s.topic_id
+                JOIN   curricula c on c.curriculum_id = t.curriculum_id
+                WHERE  q.user_id = ?
+                GROUP BY c.curriculum_name, t.title, s.title
+                ORDER BY c.display_order desc, t.learning_order desc, s.learning_order desc';
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->bind_param('i', $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
 }

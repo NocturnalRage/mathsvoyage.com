@@ -39,13 +39,45 @@ class StaticPageControllerTest extends TestCase
         $this->assertSame(get_class($this->controller), 'App\Controllers\StaticPageController');
     }
 
-    public function testHome()
+    public function testHomeNotLoggedIn()
     {
-        $response = $this->controller->home();
+        $response = $this->controller->home($this->users);
         $responseVars = $response->getVars();
         $expectedPageTitle = 'MathsVoyage.com';
         $this->assertSame($expectedPageTitle, $responseVars['pageTitle']);
         $expectedMetaDescription = 'Let us help you along your maths journey';
         $this->assertSame($expectedMetaDescription, $responseVars['metaDescription']);
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testHomeLoggedIn()
+    {
+        session_start();
+        $this->loginUser();
+        $this->users->shouldReceive('getQuizResultsSummary');
+        $response = $this->controller->home($this->users);
+        $responseVars = $response->getVars();
+        $expectedPageTitle = 'MathsVoyage.com';
+        $this->assertSame($expectedPageTitle, $responseVars['pageTitle']);
+        $expectedMetaDescription = 'Let us help you along your maths journey';
+        $this->assertSame($expectedMetaDescription, $responseVars['metaDescription']);
+    }
+
+    private function loginUser()
+    {
+        $email = 'johndoe@example.com';
+        $password = 'secretshh';
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $user = [
+            'user_id' => 10,
+            'email' => $email,
+            'given_name' => 'John',
+            'password' => $passwordHash,
+            'admin' => 0,
+        ];
+        $this->request->loginUser($user['email']);
+        $this->request->user = $user;
     }
 }

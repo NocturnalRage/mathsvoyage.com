@@ -151,6 +151,7 @@ class MysqlTimesTablesRepository implements TimesTablesRepository
 
         return $this->dbh->insert_id;
     }
+
     public function getPastScores($userId)
     {
         $sql = 'SELECT tta.id,

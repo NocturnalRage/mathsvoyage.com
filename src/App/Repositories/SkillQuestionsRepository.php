@@ -15,7 +15,5 @@ interface SkillQuestionsRepository
 
     public function createNumber($skill_question_id, $answer);
 
-    public function createHint($skill_question_id, $hint, $hint_order);
-
     public function updateImage($skill_question_id, $question_image);
 }

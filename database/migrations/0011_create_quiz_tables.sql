@@ -34,19 +34,6 @@ CREATE TABLE skill_question_options (
   FOREIGN KEY (skill_question_id) REFERENCES skill_questions(skill_question_id)
 );
 
-CREATE TABLE skill_question_hints (
-  hint_id int unsigned NOT NULL AUTO_INCREMENT,
-  skill_question_id int unsigned NOT NULL,
-  hint varchar(1000) NOT NULL,
-  hint_image varchar(255) NULL,
-  hint_order tinyint NOT NULL,
-  created_at datetime NOT NULL,
-  updated_at datetime NOT NULL,
-  PRIMARY KEY (hint_id),
-  KEY skill_question (skill_question_id),
-  FOREIGN KEY (skill_question_id) REFERENCES skill_questions(skill_question_id)
-);
-
 CREATE TABLE mastery_levels (
   mastery_level_id tinyint unsigned NOT NULL,
   mastery_level_desc varchar(20) NOT NULL,

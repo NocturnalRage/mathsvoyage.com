@@ -49,4 +49,6 @@ interface UserRepository
     public function updateSubscriber($listId, $userId, $statusId);
 
     public function findSubscriber($listId, $userId);
+
+    public function getQuizResultsSummary($userId);
 }

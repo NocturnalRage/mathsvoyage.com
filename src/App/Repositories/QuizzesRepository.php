@@ -22,8 +22,6 @@ interface QuizzesRepository
 
     public function getQuizOptions($quizId);
 
-    public function getSkillQuestionHints($skillQuestionId);
-
     public function updateQuizMultipleChoiceQuestion(
         $quizId,
         $skillQuestionId,

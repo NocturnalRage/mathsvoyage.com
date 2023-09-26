@@ -23,10 +23,6 @@ include __DIR__.'/../layout/navbar.html.php';
       </div>
     </div><!-- row -->
 
-    <div class="row">
-      <div id="hint" class="col-md-12"></div>
-    </div><!-- row -->
-
     <div class="row add-bottom">
       <div id="progress" class="col-md-12">
         <button id="action" class="btn btn-lg btn-primary">Check Answer</button>

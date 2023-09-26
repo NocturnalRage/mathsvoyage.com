@@ -85,26 +85,6 @@ class MysqlSkillQuestionsRepository implements SkillQuestionsRepository
         return $this->dbh->insert_id;
     }
 
-    public function createHint($skill_question_id, $hint, $hint_order)
-    {
-        $sql = 'INSERT INTO skill_question_hints (
-              hint_id,
-              skill_question_id,
-              hint,
-              hint_image,
-              hint_order,
-              created_at,
-              updated_at
-            )
-            VALUES (NULL, ?, ?, NULL, ?, now(), now())';
-        $stmt = $this->dbh->prepare($sql);
-        $stmt->bind_param('isi', $skill_question_id, $hint, $hint_order);
-        $stmt->execute();
-        $stmt->close();
-
-        return $this->dbh->insert_id;
-    }
-
     public function updateImage($skill_question_id, $question_image)
     {
         $sql = 'UPDATE skill_questions
