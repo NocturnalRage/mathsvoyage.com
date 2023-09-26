@@ -363,7 +363,7 @@ function processClick () {
     askQuestion(quizOptions[questionNo])
   } else if (state === SHOW_SUMMARY) {
     const output = []
-    actionButton.innerHTML = 'Back To Topics Page'
+    actionButton.innerHTML = 'Back To Previous Page'
     state = DONE
     actionButton.disabled = false
     feedbackContainer.innerHTML = ''
