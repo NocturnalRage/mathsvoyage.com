@@ -34,3 +34,21 @@
   margin-right: 10px;
   float: right;
 }
+
+.questionImage {
+  display: block;
+  margin: 0.5em auto 0.5em auto;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.quizQuestion {
+  padding: 2em;
+  background-color: #F5F5F5;
+  border: 1px solid #DDDDDD;
+  margin-bottom: 1em;
+  border-radius: 1em;
+}

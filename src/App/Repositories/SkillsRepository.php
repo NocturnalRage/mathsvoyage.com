@@ -19,4 +19,6 @@ interface SkillsRepository
     public function findWorkedSolutions($skill_id);
 
     public function findVideos($skill_id);
+
+    public function getSkillQuestionCategories();
 }

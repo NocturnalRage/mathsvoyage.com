@@ -107,16 +107,18 @@ function askMultipleChoiceQuestion (currentQuestion) {
     )
   }
   output.push(
-      `<p class="question_number text-right">Question ${questionNo + 1} of ${totalQuestions} </p>
-       <hr />
-       <div class="question">${currentQuestion.question}</div>`
+      `<div class="quizQuestion">
+         <p class="text-end text-decoration-underline">
+           Question ${questionNo + 1} of ${totalQuestions}
+         </p>
+         <p class="text-start">${currentQuestion.question}`
   )
   if (currentQuestion.question_image != null) {
-    output.push(`<div class="question_image"><img src="/images/questions/${currentQuestion.question_image}" alt="${currentQuestion.question}"</div>`)
+    output.push(`<img class="questionImage" src="/images/skill-questions/${currentQuestion.question_image}" alt="${currentQuestion.question}" />`)
   }
   output.push(
-       `<hr />
-       <div class="answers">${answers.join('')}</div>`
+       `<div class="answers">${answers.join('')}</div>
+        </div><!-- quizQuestion-->`
   )
   quizContainer.innerHTML = output.join('')
   const radios = document.querySelectorAll('input[name="question' + questionNo + '"]')
@@ -133,16 +135,18 @@ function askNumericQuestion (currentQuestion) {
         </div>`
   )
   output.push(
-      `<p class="question_number text-right">Question ${questionNo + 1} of ${totalQuestions} </p>
-       <hr />
-       <div class="question">${currentQuestion.question}</div>`
+      `<div class="quizQuestion">
+         <p class="text-end text-decoration-underline">
+           Question ${questionNo + 1} of ${totalQuestions}
+         </p>
+         <p class="text-start">${currentQuestion.question}`
   )
   if (currentQuestion.question_image != null) {
-    output.push(`<div class="question_image"><img src="/images/questions/${currentQuestion.question_image}" alt="${currentQuestion.question}"</div>`)
+    output.push(`<img class="questionImage" src="/images/skill-questions/${currentQuestion.question_image}" alt="${currentQuestion.question}" />`)
   }
   output.push(
-       `<hr />
-       <div class="answers">${answers.join('')}</div>`
+       `<div class="answers">${answers.join('')}</div>
+        </div><!-- quizQuestion-->`
   )
   quizContainer.innerHTML = output.join('')
   const answerInput = document.getElementById('answer')

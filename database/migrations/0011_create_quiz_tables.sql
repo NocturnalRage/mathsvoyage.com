@@ -7,25 +7,40 @@ CREATE TABLE skill_question_types (
 );
 
 INSERT INTO  skill_question_types VALUES (1, 'Multiple choice', now(), now());
+INSERT INTO  skill_question_types VALUES (2, 'Numeric', now(), now());
+
+CREATE TABLE skill_question_categories (
+  skill_question_category_id tinyint unsigned NOT NULL AUTO_INCREMENT,
+  description varchar(100) DEFAULT NULL,
+  created_at datetime NOT NULL,
+  updated_at datetime NOT NULL,
+  PRIMARY KEY (`skill_question_category_id`)
+);
+
+INSERT INTO  skill_question_categories VALUES (1, 'Fluency', now(), now());
+INSERT INTO  skill_question_categories VALUES (2, 'Problem Solving', now(), now());
+INSERT INTO  skill_question_categories VALUES (3, 'Reasoning', now(), now());
+
 
 CREATE TABLE skill_questions (
   skill_question_id int unsigned NOT NULL AUTO_INCREMENT,
   skill_id int unsigned NOT NULL,
   skill_question_type_id tinyint unsigned NOT NULL,
+  skill_question_category_id tinyint unsigned NOT NULL,
   question text NOT NULL,
   question_image varchar(255) NULL,
   created_at datetime NOT NULL,
   updated_at datetime NOT NULL,
   PRIMARY KEY (skill_question_id),
   FOREIGN KEY (skill_id) REFERENCES skills(skill_id),
-  FOREIGN KEY (skill_question_type_id) REFERENCES skill_question_types(skill_question_type_id)
+  FOREIGN KEY (skill_question_type_id) REFERENCES skill_question_types(skill_question_type_id),
+  FOREIGN KEY (skill_question_category_id) REFERENCES skill_question_categories(skill_question_category_id)
 );
 
 CREATE TABLE skill_question_options (
   skill_question_option_id int unsigned NOT NULL AUTO_INCREMENT,
   skill_question_id int unsigned NOT NULL,
   option_text varchar(1000) NOT NULL,
-  option_image varchar(255) NULL,
   option_order tinyint NOT NULL,
   correct bool NOT NULL,
   created_at datetime NOT NULL,
