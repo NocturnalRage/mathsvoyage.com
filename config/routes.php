@@ -44,6 +44,7 @@ return [
     ['GET', '/skills/[:curriculumSlug]/[:topicSlug]/[:skillSlug]/videos', 'SkillsController@videos', 'SkillsVideos'],
     ['GET', '/skills/[:curriculumSlug]/[:topicSlug]/[:skillSlug]/worked-solutions', 'SkillsController@worked_solutions', 'SkillsWorkedSolutions'],
     ['POST', '/skills/[:curriculumSlug]/[:topicSlug]/[:skillSlug]/quiz/create', 'SkillsController@create_quiz', 'SkillsCreateQuiz'],
+    ['GET', '/skills/[:curriculumSlug]/[:topicSlug]/[:skillSlug]/worksheet/[:categoryId]/[:numQuestions]', 'SkillsController@worksheet', 'Skillsworksheet'],
     ['POST', '/skill-questions', 'SkillQuestionsController@create', 'SkillQuestionsCreate'],
     ['GET', '/skill-questions/new', 'SkillQuestionsController@new', 'SkillQuestionsNew'],
     ['POST', '/skill-questions/createNumber', 'SkillQuestionsController@createNumber', 'SkillQuestionsCreateNumber'],

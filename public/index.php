@@ -46,6 +46,7 @@ if ($matchRequestMethod != 'GET' && ! $request->crsfTokenIsValid()) {
     if (isset($match['params'])) {
         $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         foreach ($match['params'] as $key => $param) {
+            $request->request[$key] = $param;
             if ($requestMethod == 'POST') {
                 $request->post[$key] = $param;
             } else {

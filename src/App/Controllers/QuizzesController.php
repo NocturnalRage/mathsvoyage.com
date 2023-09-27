@@ -372,7 +372,7 @@ class QuizzesController extends Controller
                     $mastery_desc = 'Proficent';
                 }
             } elseif ($percent >= 0.7) {
-                if ($previousMaster == 4) {
+                if ($previousMastery == 4) {
                     $mastery = 3;
                     $mastery_desc = 'Proficent';
                 } else {
