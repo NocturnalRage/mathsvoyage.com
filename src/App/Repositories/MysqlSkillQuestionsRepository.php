@@ -11,23 +11,25 @@ class MysqlSkillQuestionsRepository implements SkillQuestionsRepository
         $this->dbh = $dbh;
     }
 
-    public function create($question, $skill_id, $skill_question_type_id)
+    public function create($question, $skill_id, $skill_question_type_id, $skill_question_category_id)
     {
         $sql = 'INSERT INTO skill_questions (
               skill_question_id,
               skill_id,
               skill_question_type_id,
+              skill_question_category_id,
               question,
               question_image,
               created_at,
               updated_at
             )
-            VALUES (NULL, ?, ?, ?, NULL, now(), now())';
+            VALUES (NULL, ?, ?, ?, ?, NULL, now(), now())';
         $stmt = $this->dbh->prepare($sql);
         $stmt->bind_param(
-            'iis',
+            'iiis',
             $skill_id,
             $skill_question_type_id,
+            $skill_question_category_id,
             $question
         );
         $stmt->execute();
@@ -46,13 +48,12 @@ class MysqlSkillQuestionsRepository implements SkillQuestionsRepository
               skill_question_option_id,
               skill_question_id,
               option_text,
-              option_image,
               option_order,
               correct,
               created_at,
               updated_at
             )
-            VALUES (NULL, ?, ?, NULL, ?, ?, now(), now())';
+            VALUES (NULL, ?, ?, ?, ?, now(), now())';
         $stmt = $this->dbh->prepare($sql);
         $stmt->bind_param(
             'isii',

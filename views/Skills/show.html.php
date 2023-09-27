@@ -23,15 +23,22 @@ include __DIR__.'/../layout/navbar.html.php';
                 <h2 class="card-title">
                   <?= $this->esc($question['question']) ?>
                 </h2>
+                <?php if ($question['question_image']) { ?>
+                     <img src="/images/skill-questions/<?= $this->esc($question['question_image']); ?>" alt="<?= $this->esc($question['question_image']); ?>" width="640"/>
+                <?php } ?>
           <?php } ?>
-                <?php if ($question['correct'] == 1) { ?> 
-                  <p><b><?= $this->esc($question['option_order'].': '.$question['option_text']); ?></b></p>
+                <?php if ($question['skill_question_type_id'] == 1) { ?>
+                  <?php if ($question['correct'] == 1) { ?>
+                    <p><b><?= $this->esc($question['option_order'].': '.$question['option_text']); ?></b></p>
+                  <?php } else { ?>
+                    <p><?= $this->esc($question['option_order'].': '.$question['option_text']); ?></p>
+                  <?php } ?>
                 <?php } else { ?>
-                  <p><?= $this->esc($question['option_order'].': '.$question['option_text']); ?></p>
+                  <p><?= $this->esc($question['answer']); ?></p>
                 <?php } ?>
         <?php } ?>
-                </div>
               </div>
+            </div>
       </div>
     </div>
 <?php

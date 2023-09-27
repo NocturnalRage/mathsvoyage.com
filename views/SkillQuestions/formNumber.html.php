@@ -25,6 +25,20 @@
           <?php } ?>
 
           <div class="form-floating mb-3">
+            <select class="form-select" aria-label="Select category" name="skill_question_category_id" id="skill_question_category_id">
+              <?php foreach ($categories as $category) { ?>
+                <option <?php if ($category['skill_question_category_id'] == ($formVars['skill_question_category_id'] ?? '')) {
+                    echo 'selected';
+                } ?> value="<?= $this->esc($category['skill_question_category_id']); ?>"><?= $this->esc($category['description']); ?></option>
+              <?php } ?>
+            </select>
+            <label for="skill_question_category_id" class="form-label">Category</label>
+          </div>
+          <?php if (isset($errors['skill_question_category_id'])) { ?>
+            <div class="alert alert-danger"><?= $this->esc($errors['skill_question_category_id']); ?></div>
+          <?php } ?>
+
+          <div class="form-floating mb-3">
             <?php if (isset($skillQuestion['question_image'])) { ?>
               <img src="/uploads/images/skill-questions/<?= $this->esc($skillQuestion['question_image']); ?>" class="img-responsive" />
             <?php } ?>

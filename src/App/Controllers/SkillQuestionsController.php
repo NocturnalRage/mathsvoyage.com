@@ -20,6 +20,7 @@ class SkillQuestionsController extends Controller
             'activeLink' => 'Curricula',
             'submitButtonText' => 'Create',
             'skills' => $skills->all(),
+            'categories' => $skills->getSkillQuestionCategories(),
             'recaptchaKey' => $recaptcha->getRecaptchaKey(),
         ]);
         $this->addSessionVar('errors');
@@ -41,6 +42,7 @@ class SkillQuestionsController extends Controller
             'activeLink' => 'Curricula',
             'submitButtonText' => 'Create',
             'skills' => $skills->all(),
+            'categories' => $skills->getSkillQuestionCategories(),
             'recaptchaKey' => $recaptcha->getRecaptchaKey(),
         ]);
         $this->addSessionVar('errors');
@@ -63,6 +65,7 @@ class SkillQuestionsController extends Controller
         $this->request->validate([
             'question' => ['required', 'max:8000'],
             'skill_id' => ['required', 'int'],
+            'skill_question_category_id' => ['required', 'int'],
             'correctOption' => ['required', 'int'],
             'option1' => ['required', 'max:1000'],
             'option2' => ['required', 'max:1000'],
@@ -73,7 +76,8 @@ class SkillQuestionsController extends Controller
         $skillQuestionId = $skillQuestions->create(
             $this->request->post['question'],
             $this->request->post['skill_id'],
-            1
+            1,
+            $this->request->post['skill_question_category_id']
         );
 
         // Process image
@@ -140,13 +144,15 @@ class SkillQuestionsController extends Controller
         $this->request->validate([
             'question' => ['required', 'max:8000'],
             'skill_id' => ['required', 'int'],
+            'skill_question_category_id' => ['required', 'int'],
             'answer' => ['required', 'float'],
         ]);
 
         $skillQuestionId = $skillQuestions->create(
             $this->request->post['question'],
             $this->request->post['skill_id'],
-            2
+            2,
+            $this->request->post['skill_question_category_id']
         );
 
         // Process image
