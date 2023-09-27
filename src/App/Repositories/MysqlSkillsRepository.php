@@ -121,6 +121,63 @@ class MysqlSkillsRepository implements SkillsRepository
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    public function findQuestionsByCategoryId($skill_id, $category_id)
+    {
+        $sql = 'SELECT sq.skill_question_id,
+                       sq.skill_id,
+                       sq.skill_question_type_id,
+                       sq.skill_question_category_id,
+                       sq.question,
+                       sq.question_image,
+                       sqo.skill_question_option_id,
+                       sqo.option_text,
+                       sqo.correct,
+                       sqo.option_order,
+                       sqn.skill_question_number_id,
+                       sqn.answer
+                FROM   skill_questions sq
+                LEFT JOIN skill_question_options sqo ON sq.skill_question_id = sqo.skill_question_id
+                LEFT JOIN skill_question_numbers sqn ON sq.skill_question_id = sqn.skill_question_id
+                WHERE  sq.skill_id = ?
+                AND    sq.skill_question_category_id = ?
+                ORDER BY sq.skill_question_id, sqo.option_order';
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->bind_param('ii', $skill_id, $category_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function findAllQuestionsForSkill($skill_id)
+    {
+        $sql = 'SELECT sq.skill_question_id,
+                       sq.skill_id,
+                       sq.skill_question_type_id,
+                       sq.skill_question_category_id,
+                       sq.question,
+                       sq.question_image,
+                       sqo.skill_question_option_id,
+                       sqo.option_text,
+                       sqo.correct,
+                       sqo.option_order,
+                       sqn.skill_question_number_id,
+                       sqn.answer
+                FROM   skill_questions sq
+                LEFT JOIN skill_question_options sqo ON sq.skill_question_id = sqo.skill_question_id
+                LEFT JOIN skill_question_numbers sqn ON sq.skill_question_id = sqn.skill_question_id
+                WHERE  sq.skill_id = ?
+                ORDER BY sq.skill_question_id, sqo.option_order';
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->bind_param('i', $skill_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function findWorkedSolutions($skill_id)
     {
         $sql = 'SELECT *

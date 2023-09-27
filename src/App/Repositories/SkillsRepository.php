@@ -16,6 +16,10 @@ interface SkillsRepository
 
     public function findQuestions($skill_id);
 
+    public function findQuestionsByCategoryId($skill_id, $category_id);
+
+    public function findAllQuestionsForSkill($skill_id);
+
     public function findWorkedSolutions($skill_id);
 
     public function findVideos($skill_id);

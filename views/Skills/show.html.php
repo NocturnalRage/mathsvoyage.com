@@ -24,7 +24,7 @@ include __DIR__.'/../layout/navbar.html.php';
                   <?= $this->esc($question['question']) ?>
                 </h2>
                 <?php if ($question['question_image']) { ?>
-                     <img src="/images/skill-questions/<?= $this->esc($question['question_image']); ?>" alt="<?= $this->esc($question['question_image']); ?>" width="640"/>
+                     <img src="/images/skill-questions/<?= $this->esc($question['question_image']); ?>" alt="<?= $this->esc($question['question_image']); ?>" class="questionImage"/>
                 <?php } ?>
           <?php } ?>
                 <?php if ($question['skill_question_type_id'] == 1) { ?>

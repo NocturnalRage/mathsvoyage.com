@@ -377,7 +377,8 @@ function processClick () {
     output.push(
         `<div class="table-responsive skills-table">
           <table class="table table-striped table-hover">
-            <tbody>`)
+            <tbody>`
+    )
     skillsMatrix.forEach(function (skill) {
       let change
       if (skill.new_mastery_level_id > skill.mastery_level_id) {
