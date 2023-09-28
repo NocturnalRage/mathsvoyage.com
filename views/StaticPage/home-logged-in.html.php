@@ -6,8 +6,8 @@ include __DIR__.'/../layout/navbar.html.php';
     <?php include __DIR__.'/../layout/flash.html.php'; ?>
     <div class="row">
       <div class="col-md-12">
+        <h1>Your Quiz Results</h1>
         <?php if ($quizResults) { ?>
-          <h1>Your Quiz Results</h1>
           <table class="table">
             <thead>
               <tr>
@@ -33,9 +33,64 @@ include __DIR__.'/../layout/navbar.html.php';
             </tbody>
           </table>
         <?php } else { ?>
-          <h1>MathsVoyage.com</h1>
           <p>You have not attempted any quizzes yet. Once you do your results will be displayed here.</p>
         <?php } ?>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Your Times Tables Results</h1>
+         <a href="/times-tables/quiz" class="btn btn-primary">Start Next Times Tables Attempt</a>
+        <?php if ($ttResults) { ?>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Questions Correct</th>
+                <th>Total Questions Attempted</th>
+                <th>Percent Correct</th>
+              <tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><?= $this->esc($ttResults['correct']); ?></td>
+                <td><?= $this->esc($ttResults['attempted']); ?></td>
+                <td><?= $this->esc($ttResults['percent']); ?>%</td>
+              <tr>
+            </tbody>
+          </table>
+        <?php } else { ?>
+          <p>You have not attempted any times tables questions yet. Once you do your results will be displayed here.</p>
+        <?php } ?>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Your General Arithmetic Results</h1>
+        <a href="/general-arithmetic/quiz" class="btn btn-primary">Start Next General Arithmetic Attempt</a>
+        <?php if ($gaResults) { ?>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Questions Correct</th>
+                <th>Total Questions Attempted</th>
+                <th>Percent Correct</th>
+              <tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><?= $this->esc($gaResults['correct']); ?></td>
+                <td><?= $this->esc($gaResults['attempted']); ?></td>
+                <td><?= $this->esc($gaResults['percent']); ?>%</td>
+              <tr>
+            </tbody>
+          </table>
+        <?php } else { ?>
+          <p>You have not attempted any general arithmetic questions yet. Once you do your results will be displayed here.</p>
+        <?php } ?>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
         <a class="btn btn-primary" href="/arithmetic">Practice your fundamentals</a>
         <a class="btn btn-success" href="/curriculum">Dive into our lessons</a>
       </div>

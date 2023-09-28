@@ -96,6 +96,15 @@ class TimesTablesController extends Controller
             return $this->response;
         }
 
+        if (! isset($this->request->post['questionCount'])) {
+            $this->response->setVars([
+                'status' => json_encode('error'),
+                'message' => json_encode('You must provide the question count.'),
+            ]);
+
+            return $this->response;
+        }
+
         if (! isset($this->request->post['quizStartTime'])) {
             $this->response->setVars([
                 'status' => json_encode('error'),
@@ -137,6 +146,7 @@ class TimesTablesController extends Controller
             $this->request->post['timesTablesId'],
             $this->request->post['attempt'],
             $this->request->post['score'],
+            $this->request->post['questionCount'],
             $this->request->post['quizStartTime'],
             $this->request->post['quizEndTime']
         )

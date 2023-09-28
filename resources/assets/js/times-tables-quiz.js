@@ -11,7 +11,7 @@ const attemptId = parseInt(quizContainer.getAttribute('data-attempt-id'))
 const timesTablesId = parseInt(quizContainer.getAttribute('data-times-tables-id'))
 const minNumber = parseInt(quizContainer.getAttribute('data-min-number'))
 const maxNumber = parseInt(quizContainer.getAttribute('data-max-number'))
-const totalQuestions = parseInt(quizContainer.getAttribute('data-total-questions'))
+const questionCount = parseInt(quizContainer.getAttribute('data-question-count'))
 const repetitions = parseInt(quizContainer.getAttribute('data-repetitions'))
 const attempt = parseInt(quizContainer.getAttribute('data-attempt'))
 const crsfToken = quizContainer.getAttribute('data-crsf-token')
@@ -141,7 +141,7 @@ function askQuestion () {
   }
 
   output.push(
-      `<p class="question_number text-right">Question ${questionNo + 1} of ${totalQuestions} </p>`
+      `<p class="question_number text-right">Question ${questionNo + 1} of ${questionCount} </p>`
   )
   output.push(
        `<hr />
@@ -204,7 +204,7 @@ function checkAnswer () {
 function moveOn () {
   // Next question or show summary
   questionNo++
-  if (questionNo >= totalQuestions) {
+  if (questionNo >= questionCount) {
     quizEndTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
     recordScore(attemptId, timesTablesId, attempt, score, quizStartTime, quizEndTime)
     state = SHOW_SUMMARY
@@ -235,9 +235,9 @@ function processClick () {
     feedbackContainer.innerHTML = ''
     output.push(`
       <h1>Keep going. Keep growing.</h1>
-      <p>${score}/${totalQuestions} correct!</p>`)
+      <p>${score}/${questionCount} correct!</p>`)
     quizContainer.innerHTML = output.join('')
-    if (score === totalQuestions) {
+    if (score === questionCount) {
       fireworks(5)
       hundredPercentSound.play()
     }
@@ -247,7 +247,7 @@ function processClick () {
 }
 
 function recordScore (attemptId, timesTablesId, attempt, score, quizStartTime, quizEndTime) {
-  const data = 'attemptId=' + encodeURIComponent(attemptId) + '&timesTablesId=' + encodeURIComponent(timesTablesId) + '&attempt=' + attempt + '&score=' + encodeURIComponent(score) + '&quizStartTime=' + encodeURIComponent(quizStartTime) + '&quizEndTime=' + encodeURIComponent(quizEndTime) + '&crsfToken=' + encodeURIComponent(crsfToken)
+  const data = 'attemptId=' + encodeURIComponent(attemptId) + '&timesTablesId=' + encodeURIComponent(timesTablesId) + '&attempt=' + attempt + '&score=' + encodeURIComponent(score) + '&questionCount=' + encodeURIComponent(questionCount) + '&quizStartTime=' + encodeURIComponent(quizStartTime) + '&quizEndTime=' + encodeURIComponent(quizEndTime) + '&crsfToken=' + encodeURIComponent(crsfToken)
   const options = {
     method: 'POST',
     headers: {

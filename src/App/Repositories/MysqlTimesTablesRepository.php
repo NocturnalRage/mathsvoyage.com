@@ -52,9 +52,10 @@ class MysqlTimesTablesRepository implements TimesTablesRepository
     {
         $sql = 'SELECT date_format(tts.completed_at, "%M %d %Y") as quiz_date,
                        tts.id, tts.attempt_id, tts.times_tables_id,
-                       tts.attempt, tts.score, tts.started_at, tts.completed_at,
+                       tts.attempt, tts.score, tts.question_count,
+                       tts.started_at, tts.completed_at,
                        TIMESTAMPDIFF(SECOND, tts.started_at, tts.completed_at) as time_in_seconds,
-                       round(tts.score/tt.total_questions * 100) as percent,
+                       round(tts.score/tts.question_count * 100) as percent,
                        tt.id as times_tables_id, tt.title, tt.min_number,
                        tt.max_number, tt.total_questions, tt.repetitions
                 FROM   times_tables_scores tts
@@ -132,7 +133,7 @@ class MysqlTimesTablesRepository implements TimesTablesRepository
         return $rowsUpdated;
     }
 
-    public function recordScore($attemptId, $timesTablesId, $attempt, $score, $startTime, $endTime)
+    public function recordScore($attemptId, $timesTablesId, $attempt, $score, $questionCount, $startTime, $endTime)
     {
         $sql = 'INSERT INTO times_tables_scores (
               id,
@@ -140,12 +141,13 @@ class MysqlTimesTablesRepository implements TimesTablesRepository
               times_tables_id,
               attempt,
               score,
+              question_count,
               started_at,
               completed_at
             )
-            VALUES (NULL, ?, ?, ?, ?, ?, ?)';
+            VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)';
         $stmt = $this->dbh->prepare($sql);
-        $stmt->bind_param('iiiiss', $attemptId, $timesTablesId, $attempt, $score, $startTime, $endTime);
+        $stmt->bind_param('iiiiiss', $attemptId, $timesTablesId, $attempt, $score, $questionCount, $startTime, $endTime);
         $stmt->execute();
         $stmt->close();
 
@@ -157,8 +159,8 @@ class MysqlTimesTablesRepository implements TimesTablesRepository
         $sql = 'SELECT tta.id,
                        date_format(tta.completed_at, "%M %d %Y") as finish_date,
                        sum(tts.score) as total_score,
-                       count(*) * 50 as question_count,
-                       round(sum(tts.score) / (count(*) * 50) * 100) as percentage,
+                       sum(tts.question_count) as question_count,
+                       round(sum(tts.score) / sum(tts.question_count) * 100) as percentage,
                        round(avg(TIMESTAMPDIFF(SECOND, tts.started_at, tts.completed_at))) as average_time
                 FROM   times_tables_attempts tta
                 JOIN   times_tables_scores tts ON tta.id = tts.attempt_id
