@@ -21,7 +21,7 @@ function fetchWorkedSolutions () {
 }
 
 function showQuestion (currentQuestion) {
-  workedSolutionsContainer.innerHTML = `<img src="/images/worked-solutions/${currentQuestion.question}" alt="Worked Example">`
+  workedSolutionsContainer.innerHTML = `<img src="/uploads/worked-solutions/${currentQuestion.question}" alt="Worked Example">`
 }
 
 function showNextQuestion () {
@@ -38,9 +38,9 @@ function processToggleAnswer () {
 }
 function toggleAnswer (currentQuestion) {
   if (answerDisplayed) {
-    workedSolutionsContainer.innerHTML = `<img src="/images/worked-solutions/${currentQuestion.question}" alt="Worked Example">`
+    workedSolutionsContainer.innerHTML = `<img src="/uploads/worked-solutions/${currentQuestion.question}" alt="Worked Example">`
   } else {
-    workedSolutionsContainer.innerHTML = `<img src="/images/worked-solutions/${currentQuestion.answer}" alt="Worked Example">`
+    workedSolutionsContainer.innerHTML = `<img src="/uploads/worked-solutions/${currentQuestion.answer}" alt="Worked Example">`
   }
   answerDisplayed = !answerDisplayed
 }

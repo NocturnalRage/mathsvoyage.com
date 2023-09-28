@@ -91,7 +91,7 @@ class SkillQuestionsController extends Controller
                 return $this->redirectTo('/skill-questions/new');
             }
             $questionImage = $this->moveFile(
-                'images/skill-questions',
+                'uploads/skill-questions',
                 $questionImageInfo,
                 $skillQuestionId
             );
@@ -166,7 +166,7 @@ class SkillQuestionsController extends Controller
                 return $this->redirectTo('/skill-questions/new');
             }
             $questionImage = $this->moveFile(
-                'images/skill-questions',
+                'uploads/skill-questions',
                 $questionImageInfo,
                 $skillQuestionId
             );

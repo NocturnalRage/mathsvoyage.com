@@ -17,7 +17,7 @@
 
           <div class="form-floating mb-3">
             <?php if (isset($workedSolution['question'])) { ?>
-              <img src="/uploads/images/worked-questions/<?= $this->esc($workedSolution['question']); ?>" class="img-responsive" />
+              <img src="/uploads/worked-questions/<?= $this->esc($workedSolution['question']); ?>" class="img-responsive" />
             <?php } ?>
             <input type="file"
                    name="question"
@@ -35,7 +35,7 @@
 
           <div class="form-floating mb-3">
             <?php if (isset($workedSolution['answer'])) { ?>
-              <img src="/uploads/images/worked-questions/<?= $this->esc($workedSolution['answer']); ?>" class="img-responsive" />
+              <img src="/uploads/worked-questions/<?= $this->esc($workedSolution['answer']); ?>" class="img-responsive" />
             <?php } ?>
             <input type="file"
                    name="answer"

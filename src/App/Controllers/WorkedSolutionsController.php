@@ -60,13 +60,13 @@ class WorkedSolutionsController extends Controller
         }
         $workedSolutionId = $workedSolutions->create($this->request->post['skill_id']);
         $questionImage = $this->moveFile(
-            'images/worked-solutions',
+            'uploads/worked-solutions',
             $questionImageInfo,
             $workedSolutionId,
             'question'
         );
         $answerImage = $this->moveFile(
-            'images/worked-solutions',
+            'uploads/worked-solutions',
             $answerImageInfo,
             $workedSolutionId,
             'answer'

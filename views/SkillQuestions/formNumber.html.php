@@ -40,7 +40,7 @@
 
           <div class="form-floating mb-3">
             <?php if (isset($skillQuestion['question_image'])) { ?>
-              <img src="/uploads/images/skill-questions/<?= $this->esc($skillQuestion['question_image']); ?>" class="img-responsive" />
+              <img src="/uploads/skill-questions/<?= $this->esc($skillQuestion['question_image']); ?>" class="img-responsive" />
             <?php } ?>
             <input type="file"
                    name="question_image"
