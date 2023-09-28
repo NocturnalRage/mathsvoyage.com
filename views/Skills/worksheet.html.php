@@ -31,7 +31,7 @@
           <h5>Question <?= $this->esc($questionNumber); ?></h5>
           <p><?= $this->esc($question['question']) ?></p>
           <?php if ($question['question_image']) { ?>
-            <img src="/images/skill-questions/<?= $this->esc($question['question_image']); ?>" alt="<?= $this->esc($question['question_image']); ?>" class="questionImage"/>
+            <img src="/uploads/skill-questions/<?= $this->esc($question['question_image']); ?>" alt="<?= $this->esc($question['question_image']); ?>" class="questionImage"/>
           <?php } ?>
           <?php if ($question['skill_question_type_id'] == 1) { ?>
             <?php foreach ($question['options'] as $option) { ?>

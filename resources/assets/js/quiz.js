@@ -114,7 +114,7 @@ function askMultipleChoiceQuestion (currentQuestion) {
          <p class="text-start">${currentQuestion.question}`
   )
   if (currentQuestion.question_image != null) {
-    output.push(`<img class="questionImage" src="/images/skill-questions/${currentQuestion.question_image}" alt="${currentQuestion.question}" />`)
+    output.push(`<img class="questionImage" src="/uploads/skill-questions/${currentQuestion.question_image}" alt="${currentQuestion.question}" />`)
   }
   output.push(
        `<div class="answers">${answers.join('')}</div>
@@ -142,7 +142,7 @@ function askNumericQuestion (currentQuestion) {
          <p class="text-start">${currentQuestion.question}`
   )
   if (currentQuestion.question_image != null) {
-    output.push(`<img class="questionImage" src="/images/skill-questions/${currentQuestion.question_image}" alt="${currentQuestion.question}" />`)
+    output.push(`<img class="questionImage" src="/uploads/skill-questions/${currentQuestion.question_image}" alt="${currentQuestion.question}" />`)
   }
   output.push(
        `<div class="answers">${answers.join('')}</div>
