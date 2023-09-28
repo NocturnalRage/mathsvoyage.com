@@ -43,6 +43,7 @@ cp -r $GITDIR/public/sounds $APPHOME/public/
 
 echo "Upgrade front controller script"
 cp $GITDIR/public/index.php $APPHOME/public/
+cp $GITDIR/public/.htaccess $APPHOME/public/
 
 echo "Replace favicon.ico"
 cp $GITDIR/public/favicon.ico $APPHOME/public/
