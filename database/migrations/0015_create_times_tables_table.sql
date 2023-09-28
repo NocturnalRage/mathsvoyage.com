@@ -45,6 +45,7 @@ CREATE TABLE times_tables_scores (
   times_tables_id smallint unsigned NOT NULL,
   attempt smallint unsigned NOT NULL,
   score smallint unsigned NOT NULL,
+  question_count smallint unsigned NOT NULL,
   started_at datetime NOT NULL,
   completed_at datetime NOT NULL,
   PRIMARY KEY (id),

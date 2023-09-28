@@ -18,7 +18,7 @@ include __DIR__.'/../layout/navbar.html.php';
            data-times-tables-id="<?= $this->esc($attempt['times_tables_id']); ?>"
            data-min-number="<?= $this->esc($attempt['min_number']); ?>"
            data-max-number="<?= $this->esc($attempt['max_number']); ?>"
-           data-total-questions="<?= $this->esc($attempt['total_questions']); ?>"
+           data-question-count="<?= $this->esc($attempt['total_questions']); ?>"
            data-repetitions="<?= $this->esc($attempt['repetitions']); ?>"
            data-attempt="<?= $this->esc($attempt['attempt']); ?>"
            data-crsf-token="<?= $this->esc($crsfToken); ?>"

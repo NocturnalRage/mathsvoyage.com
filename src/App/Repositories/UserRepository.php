@@ -51,4 +51,8 @@ interface UserRepository
     public function findSubscriber($listId, $userId);
 
     public function getQuizResultsSummary($userId);
+
+    public function getTimesTablesResultsSummary($userId);
+
+    public function getGeneralArithmeticResultsSummary($userId);
 }

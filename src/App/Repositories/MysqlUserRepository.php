@@ -340,4 +340,37 @@ class MysqlUserRepository implements UserRepository
 
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+
+    public function getTimesTablesResultsSummary($userId)
+    {
+        $sql = 'SELECT sum(tts.score) as correct,
+                       sum(tts.question_count) as attempted,
+                       round(sum(tts.score) / sum(tts.question_count) * 100) as percent
+                FROM   times_tables_attempts tta
+                JOIN   times_tables_scores tts ON tta.id = tts.attempt_id
+                WHERE  tta.user_id = ?';
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->bind_param('i', $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        return $result->fetch_assoc();
+    }
+
+    public function getGeneralArithmeticResultsSummary($userId)
+    {
+        $sql = 'SELECT sum(correct) as correct,
+                       sum(question_count) as attempted,
+                       round(sum(correct) / sum(question_count) * 100) as percent
+                FROM   general_arithmetic_scores
+                WHERE  user_id = ?';
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->bind_param('i', $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        return $result->fetch_assoc();
+    }
 }
