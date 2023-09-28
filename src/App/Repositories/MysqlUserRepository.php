@@ -348,7 +348,8 @@ class MysqlUserRepository implements UserRepository
                        round(sum(tts.score) / sum(tts.question_count) * 100) as percent
                 FROM   times_tables_attempts tta
                 JOIN   times_tables_scores tts ON tta.id = tts.attempt_id
-                WHERE  tta.user_id = ?';
+                WHERE  tta.user_id = ?
+                GROUP BY tta.user_id';
         $stmt = $this->dbh->prepare($sql);
         $stmt->bind_param('i', $userId);
         $stmt->execute();
@@ -364,7 +365,8 @@ class MysqlUserRepository implements UserRepository
                        sum(question_count) as attempted,
                        round(sum(correct) / sum(question_count) * 100) as percent
                 FROM   general_arithmetic_scores
-                WHERE  user_id = ?';
+                WHERE  user_id = ?
+                GROUP BY user_id';
         $stmt = $this->dbh->prepare($sql);
         $stmt->bind_param('i', $userId);
         $stmt->execute();
