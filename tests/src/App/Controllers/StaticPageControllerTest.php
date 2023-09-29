@@ -57,6 +57,8 @@ class StaticPageControllerTest extends TestCase
         session_start();
         $this->loginUser();
         $this->users->shouldReceive('getQuizResultsSummary');
+        $this->users->shouldReceive('getTimesTablesResultsSummary');
+        $this->users->shouldReceive('getGeneralArithmeticResultsSummary');
         $response = $this->controller->home($this->users);
         $responseVars = $response->getVars();
         $expectedPageTitle = 'MathsVoyage.com';

@@ -11,6 +11,45 @@ class MysqlSkillQuestionsRepository implements SkillQuestionsRepository
         $this->dbh = $dbh;
     }
 
+    public function find($skill_question_id)
+    {
+        $sql = 'SELECT *
+                FROM   skill_questions
+                WHERE  skill_question_id = ?';
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->bind_param('i', $skill_question_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        return $result->fetch_assoc();
+    }
+
+    public function findOrFail($skill_question_id)
+    {
+        $question = $this->find($skill_question_id);
+        if (! $question) {
+            throw new RepositoryNotFoundException();
+        }
+
+        return $question;
+    }
+
+    public function findOptions($skill_question_id)
+    {
+        $sql = 'SELECT *
+                FROM   skill_question_options
+                WHERE  skill_question_id = ?
+                ORDER BY option_order';
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->bind_param('i', $skill_question_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function create($question, $skill_id, $skill_question_type_id, $skill_question_category_id)
     {
         $sql = 'INSERT INTO skill_questions (

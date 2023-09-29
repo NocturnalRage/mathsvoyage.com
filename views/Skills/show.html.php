@@ -10,6 +10,7 @@ include __DIR__.'/../layout/navbar.html.php';
            include __DIR__.'/../layout/flash.html.php';
 ?>
         <hr />
+        <?php $questionNo = 0; ?>
         <?php $questionId = 0; ?>
         <?php foreach ($questions as $question) { ?>
           <?php if ($questionId != $question['skill_question_id']) { ?>
@@ -18,8 +19,14 @@ include __DIR__.'/../layout/navbar.html.php';
               </div>
             <?php } ?>
             <?php $questionId = $question['skill_question_id']; ?>
+            <?php $questionNo++; ?>
             <div class="card">
               <div class="card-body">
+                <p>
+                  <a href="/skill-questions/<?= $this->esc($questionId); ?>">
+                    Question <?= $this->esc($questionNo); ?>
+                  </a>
+                </p>
                 <h2 class="card-title">
                   <?= $this->esc($question['question']) ?>
                 </h2>

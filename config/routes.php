@@ -49,6 +49,7 @@ return [
     ['GET', '/skill-questions/new', 'SkillQuestionsController@new', 'SkillQuestionsNew'],
     ['POST', '/skill-questions/createNumber', 'SkillQuestionsController@createNumber', 'SkillQuestionsCreateNumber'],
     ['GET', '/skill-questions/newNumber', 'SkillQuestionsController@newNumber', 'SkillQuestionsNewNumber'],
+    ['GET', '/skill-questions/[:skillQuestionId]', 'SkillQuestionsController@show', 'SkillQuestionsShow'],
     ['POST', '/videos', 'VideosController@create', 'VideosCreate'],
     ['GET', '/videos/new', 'VideosController@new', 'VideosNew'],
     ['POST', '/worked-solutions', 'WorkedSolutionsController@create', 'WorkedSolutionsCreate'],
