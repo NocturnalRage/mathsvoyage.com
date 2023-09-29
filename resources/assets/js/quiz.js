@@ -131,7 +131,7 @@ function askNumericQuestion (currentQuestion) {
 
   answers.push(
         `<div class="form-floating mb-3">
-            <input class="form-control-lg" type="number" id="answer" name="answer${questionNo}">
+            <input class="form-control-lg" type="text" id="answer" name="answer${questionNo}">
         </div>`
   )
   output.push(
@@ -256,7 +256,8 @@ function checkMultipleChoiceAnswer (currentQuestion) {
 }
 
 function checkNumericAnswer (currentQuestion) {
-  const answer = parseFloat(document.getElementById('answer').value)
+  let answer = convertToNumber(document.getElementById('answer').value)
+  answer = parseFloat(answer)
 
   let correctOrNot = 0
   if (answer === currentQuestion.answer) {
@@ -449,6 +450,10 @@ function recordQuizCompletion (quizStartTime, quizEndTime) {
       skillsMatrix = data.skillsMatrix
     })
     .catch(error => { console.error(error) })
+}
+
+function convertToNumber (num) {
+  return num.replace(/[^\d.-]/g, '')
 }
 
 // display quiz after start button pressed
