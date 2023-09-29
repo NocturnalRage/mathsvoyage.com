@@ -42,7 +42,7 @@ include __DIR__.'/../layout/navbar.html.php';
                     <a class="btn btn-primary" href="/skills/<?= $this->esc($curriculum['curriculum_slug'].'/'.$topic['slug'].'/'.$skill['slug']) ?>/worksheet/1/20">Generate 20 Fluency Questions</a>
                     <a class="btn btn-primary" href="/skills/<?= $this->esc($curriculum['curriculum_slug'].'/'.$topic['slug'].'/'.$skill['slug']) ?>/worksheet/2/10">Generate 10 Problem Solving Questions</a>
                     <a class="btn btn-primary" href="/skills/<?= $this->esc($curriculum['curriculum_slug'].'/'.$topic['slug'].'/'.$skill['slug']) ?>/worksheet/3/3">Generate 3 Reasoning Questions</a>
-                    <a class="btn btn-primary" href="/skills/<?= $this->esc($curriculum['curriculum_slug'].'/'.$topic['slug'].'/'.$skill['slug']) ?>/worksheet/4/3">Generate 30 Questions of any Type</a>
+                    <a class="btn btn-primary" href="/skills/<?= $this->esc($curriculum['curriculum_slug'].'/'.$topic['slug'].'/'.$skill['slug']) ?>/worksheet/4/30">Generate 30 Questions of any Type</a>
                 <?php } ?>
               </p>
             </div>

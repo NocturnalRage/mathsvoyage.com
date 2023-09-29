@@ -186,6 +186,39 @@ class SkillQuestionsController extends Controller
         return $this->redirectTo('/curriculum');
     }
 
+    public function show(SkillQuestionsRepository $skillQuestions)
+    {
+        if (! $this->isAdmin()) {
+            return $this->redirectTo('/curriculum');
+        }
+        $question = $skillQuestions->find($this->request->get['skillQuestionId']);
+        $options = $skillQuestions->findOptions($this->request->get['skillQuestionId']);
+        if ($options) {
+            $numOptions = count($options);
+            for ($i = 0; $i < $numOptions; $i++) {
+                if ($options[$i]['option_order'] == 1) {
+                    $options[$i]['option_letter'] = 'A';
+                } elseif ($options[$i]['option_order'] == 2) {
+                    $options[$i]['option_letter'] = 'B';
+                } elseif ($options[$i]['option_order'] == 3) {
+                    $options[$i]['option_letter'] = 'C';
+                } else {
+                    $options[$i]['option_letter'] = 'D';
+                }
+            }
+        }
+
+        $this->response->setVars([
+            'pageTitle' => 'Show question to create a worked solution',
+            'metaDescription' => 'Show question to create a worked solution',
+            'activeLink' => 'Curricula',
+            'question' => $question,
+            'options' => $options,
+        ]);
+
+        return $this->response;
+    }
+
     private function isSkillQuestionImageValid($questionImageInfo)
     {
         if ($questionImageInfo['size'] == 0) {
