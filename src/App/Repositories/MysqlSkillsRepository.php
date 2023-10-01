@@ -13,6 +13,30 @@ class MysqlSkillsRepository implements SkillsRepository
         $this->dbh = $dbh;
     }
 
+    public function find($skill_id)
+    {
+        $sql = 'SELECT *
+                FROM   skills
+                WHERE  skill_id = ?';
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->bind_param('i', $skill_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        return $result->fetch_assoc();
+    }
+
+    public function findOrFail($skill_id)
+    {
+        $skill = $this->find($skill_id);
+        if (! $skill) {
+            throw new RepositoryNotFoundException();
+        }
+
+        return $skill;
+    }
+
     public function findByTitleAndTopicId($title, $topic_id)
     {
         $sql = 'SELECT *
@@ -212,6 +236,54 @@ class MysqlSkillsRepository implements SkillsRepository
                 FROM   skill_question_categories
                 ORDER BY skill_question_category_id';
         $result = $this->dbh->query($sql);
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getCurrentWorkedSolutions($skill_id)
+    {
+        $sql = 'SELECT worked_solution_id, skill_id, question, answer
+                FROM   worked_solutions
+                WHERE  skill_id = ?';
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->bind_param('i', $skill_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getTopicWorkedSolutions($skill_id)
+    {
+        $sql = 'SELECT ws.worked_solution_id, ws.skill_id, ws.question, ws.answer
+                FROM   skills s
+                JOIN   skills s2 on s.topic_id = s2.topic_id and s2.learning_order <= s.learning_order
+                JOIN   worked_solutions ws on ws.skill_id = s2.skill_id
+                WHERE  s.skill_id = ?';
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->bind_param('i', $skill_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getCurriculumWorkedSolutions($skill_id)
+    {
+        $sql = 'SELECT ws.worked_solution_id, ws.skill_id, ws.question, ws.answer
+                FROM   skills s
+                JOIN   topics t ON t.topic_id = s.topic_id
+                JOIN   topics t2 ON t2.curriculum_id = t.curriculum_id AND t2.learning_order <= t.learning_order
+                JOIN   skills s2 ON t2.topic_id = s2.topic_id
+                JOIN   worked_solutions ws ON ws.skill_id = s2.skill_id
+                WHERE  s.skill_id = ?';
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->bind_param('i', $skill_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
 
         return $result->fetch_all(MYSQLI_ASSOC);
     }

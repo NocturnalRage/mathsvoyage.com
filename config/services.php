@@ -110,6 +110,13 @@ $di->set('GeneralArithmeticController', function () use ($di) {
     );
 });
 
+$di->set('DoNowController', function () use ($di) {
+    return new App\Controllers\DoNowController(
+        $di->get('Request'),
+        $di->get('Response')
+    );
+});
+
 /* Repositories start here */
 $di->set('dbh', function () {
     return new \Mysqli(

@@ -67,4 +67,5 @@ return [
     ['GET', '/general-arithmetic', 'GeneralArithmeticController@index', 'GeneralArithmeticIndex'],
     ['GET', '/general-arithmetic/quiz', 'GeneralArithmeticController@quiz', 'GeneralArithmeticQuiz'],
     ['POST', '/general-arithmetic/quizzes/record-score', 'GeneralArithmeticController@record_score', 'GeneralArithmeticRecordScore'],
+    ['GET', '/do-now/[:skillId]/[:doNowState]', 'DoNowController@show', 'DoNowShow'],
 ];

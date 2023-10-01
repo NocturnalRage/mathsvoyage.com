@@ -4,6 +4,10 @@ namespace App\Repositories;
 
 interface SkillsRepository
 {
+    public function find($skill_id);
+
+    public function findOrFail($skill_id);
+
     public function findByTitleAndTopicId($title, $curriculum_id);
 
     public function findBySlugAndTopicId($slug, $curriculum_id);
@@ -25,4 +29,10 @@ interface SkillsRepository
     public function findVideos($skill_id);
 
     public function getSkillQuestionCategories();
+
+    public function getCurrentWorkedSolutions($skill_id);
+
+    public function getTopicWorkedSolutions($skill_id);
+
+    public function getCurriculumWorkedSolutions($skill_id);
 }

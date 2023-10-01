@@ -9,5 +9,6 @@ mix
   .js('resources/assets/js/times-tables-quiz.js', './public/js/')
   .js('resources/assets/js/general-arithmetic-quiz.js', './public/js/')
   .js('resources/assets/js/workedSolutions.js', './public/js/')
+  .js('resources/assets/js/doNow.js', './public/js/')
   .eslint()
   .version();
