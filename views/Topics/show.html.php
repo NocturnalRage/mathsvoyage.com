@@ -43,6 +43,10 @@ include __DIR__.'/../layout/navbar.html.php';
                     <a class="btn btn-primary" href="/skills/<?= $this->esc($curriculum['curriculum_slug'].'/'.$topic['slug'].'/'.$skill['slug']) ?>/worksheet/2/10">Generate 10 Problem Solving Questions</a>
                     <a class="btn btn-primary" href="/skills/<?= $this->esc($curriculum['curriculum_slug'].'/'.$topic['slug'].'/'.$skill['slug']) ?>/worksheet/3/3">Generate 3 Reasoning Questions</a>
                     <a class="btn btn-primary" href="/skills/<?= $this->esc($curriculum['curriculum_slug'].'/'.$topic['slug'].'/'.$skill['slug']) ?>/worksheet/4/30">Generate 30 Questions of any Type</a>
+                    <hr />
+                    <a class="btn btn-success" href="/do-now/<?= $this->esc($skill['skill_id'].'/current') ?>">Generate Do Now Questions for this Skill</a>
+                    <a class="btn btn-success" href="/do-now/<?= $this->esc($skill['skill_id'].'/topic') ?>">Generate Do Now Questions including past skills in this topic</a>
+                    <a class="btn btn-success" href="/do-now/<?= $this->esc($skill['skill_id'].'/curriculum') ?>">Generate Do Now Questions including past skills in this curriculum</a>
                 <?php } ?>
               </p>
             </div>
