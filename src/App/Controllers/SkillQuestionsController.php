@@ -30,15 +30,15 @@ class SkillQuestionsController extends Controller
         return $this->response;
     }
 
-    public function newNumber(SkillsRepository $skills, RecaptchaClient $recaptcha)
+    public function newKasAnswer(SkillsRepository $skills, RecaptchaClient $recaptcha)
     {
         if (! $this->isAdmin()) {
             return $this->redirectTo('/curriculum');
         }
 
         $this->response->setVars([
-            'pageTitle' => 'Add New Skill Number Question',
-            'metaDescription' => 'Add a new skill number question',
+            'pageTitle' => 'Add New Kas Answer Question',
+            'metaDescription' => 'Add a new Kas answer question',
             'activeLink' => 'Curricula',
             'submitButtonText' => 'Create',
             'skills' => $skills->all(),
@@ -72,12 +72,17 @@ class SkillQuestionsController extends Controller
             'option3' => ['required', 'max:1000'],
             'option4' => ['required', 'max:1000'],
         ]);
+        $randomiseOptions = 1;
+        if (empty($this->request->post['randomise_options'])) {
+          $randomiseOptions = 0;
+        }
 
         $skillQuestionId = $skillQuestions->create(
             $this->request->post['question'],
             $this->request->post['skill_id'],
-            1,
-            $this->request->post['skill_question_category_id']
+            1, /* Multiple Choice Question Type */
+            $this->request->post['skill_question_category_id'],
+            $randomiseOptions
         );
 
         // Process image
@@ -131,7 +136,7 @@ class SkillQuestionsController extends Controller
         return $this->redirectTo('/curriculum');
     }
 
-    public function createNumber(SkillQuestionsRepository $skillQuestions, RecaptchaClient $recaptcha)
+    public function createKasAnswer(SkillQuestionsRepository $skillQuestions, RecaptchaClient $recaptcha)
     {
         if (! $this->isAdmin()) {
             return $this->redirectTo('/curriculum');
@@ -145,14 +150,15 @@ class SkillQuestionsController extends Controller
             'question' => ['required', 'max:8000'],
             'skill_id' => ['required', 'int'],
             'skill_question_category_id' => ['required', 'int'],
-            'answer' => ['required', 'float'],
+            'answer' => ['required'],
         ]);
 
         $skillQuestionId = $skillQuestions->create(
             $this->request->post['question'],
             $this->request->post['skill_id'],
-            2,
-            $this->request->post['skill_question_category_id']
+            2, /* Numeric Question Type */
+            $this->request->post['skill_question_category_id'],
+            0 /* randomise_options - not relevant for this question type */
         );
 
         // Process image
@@ -178,9 +184,11 @@ class SkillQuestionsController extends Controller
             }
         }
 
-        $skillQuestionNumberId = $skillQuestions->createNumber(
+        $skillQuestionNumberId = $skillQuestions->createKasAnswer(
             $skillQuestionId,
-            $this->request->post['answer']
+            $this->request->post['answer'],
+            1,
+            1
         );
 
         return $this->redirectTo('/curriculum');

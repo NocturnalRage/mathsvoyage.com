@@ -68,26 +68,35 @@ class QuizzesController extends Controller
         $currentSkillQuestionId = $options[0]['skill_question_id'];
         $currentSkillQuestionTypeId = $options[0]['skill_question_type_id'];
         $currentAnswer = $options[0]['answer'];
-        $currentHelpSlug = $options[0]['help_slug'];
+        $currentRandomise = $options[0]['randomise_options'];
+        $currentForm = $options[0]['form'];
+        $currentSimplify = $options[0]['simplify'];
 
         foreach ($options as $option) {
             if ($option['skill_question_id'] != $currentSkillQuestionId) {
+                if ($currentRandomise) {
+                  shuffle($quizOption);
+                }
                 $quizOptions[] = [
                     'question' => $currentQuestion,
                     'question_image' => $currentQuestionImage,
                     'skill_question_id' => $currentSkillQuestionId,
                     'skill_question_type_id' => $currentSkillQuestionTypeId,
+                    'randomise_options' => $currentRandomise,
                     'answer' => $currentAnswer,
+                    'form' => $currentForm,
+                    'simplify' => $currentSimplify,
                     'answers' => $quizOption,
-                    'help_slug' => $currentHelpSlug,
                 ];
                 $quizOption = [];
                 $currentQuestion = $option['question'];
                 $currentQuestionImage = $option['question_image'];
                 $currentSkillQuestionId = $option['skill_question_id'];
                 $currentSkillQuestionTypeId = $option['skill_question_type_id'];
+                $currentRandomise = $option['randomise_options'];
                 $currentAnswer = $option['answer'];
-                $currentHelpSlug = $options[0]['help_slug'];
+                $currentForm = $option['form'];
+                $currentSimplify = $option['simplify'];
             }
             $quizOption[] = [
                 'skill_question_option_id' => $option['skill_question_option_id'],
@@ -96,14 +105,18 @@ class QuizzesController extends Controller
                 'correct' => $option['correct'],
             ];
         }
+        if ($currentRandomise) {
+          shuffle($quizOption);
+        }
         $quizOptions[] = [
             'question' => $currentQuestion,
             'question_image' => $currentQuestionImage,
             'skill_question_id' => $currentSkillQuestionId,
             'skill_question_type_id' => $currentSkillQuestionTypeId,
             'answer' => $currentAnswer,
+            'form' => $currentForm,
+            'simplify' => $currentSimplify,
             'answers' => $quizOption,
-            'help_slug' => $currentHelpSlug,
         ];
 
         // Give questions in random order

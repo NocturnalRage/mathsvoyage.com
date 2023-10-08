@@ -50,25 +50,27 @@ class MysqlSkillQuestionsRepository implements SkillQuestionsRepository
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function create($question, $skill_id, $skill_question_type_id, $skill_question_category_id)
+    public function create($question, $skill_id, $skill_question_type_id, $skill_question_category_id, $randomise_options)
     {
         $sql = 'INSERT INTO skill_questions (
               skill_question_id,
               skill_id,
               skill_question_type_id,
               skill_question_category_id,
+              randomise_options,
               question,
               question_image,
               created_at,
               updated_at
             )
-            VALUES (NULL, ?, ?, ?, ?, NULL, now(), now())';
+            VALUES (NULL, ?, ?, ?, ?, ?, NULL, now(), now())';
         $stmt = $this->dbh->prepare($sql);
         $stmt->bind_param(
-            'iiis',
+            'iiiis',
             $skill_id,
             $skill_question_type_id,
             $skill_question_category_id,
+            $randomise_options,
             $question
         );
         $stmt->execute();
@@ -107,18 +109,20 @@ class MysqlSkillQuestionsRepository implements SkillQuestionsRepository
         return $this->dbh->insert_id;
     }
 
-    public function createNumber($skill_question_id, $answer)
+    public function createKasAnswer($skill_question_id, $answer, $form, $simplify)
     {
-        $sql = 'INSERT INTO skill_question_numbers (
-              skill_question_number_id,
+        $sql = 'INSERT INTO skill_question_kas (
+              skill_question_kas_id,
               skill_question_id,
               answer,
+              form,
+              simplify,
               created_at,
               updated_at
             )
-            VALUES (NULL, ?, ?, now(), now())';
+            VALUES (NULL, ?, ?, ?, ?, now(), now())';
         $stmt = $this->dbh->prepare($sql);
-        $stmt->bind_param('id', $skill_question_id, $answer);
+        $stmt->bind_param('isii', $skill_question_id, $answer, $form, $simplify);
         $stmt->execute();
         $stmt->close();
 

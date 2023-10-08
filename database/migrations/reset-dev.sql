@@ -1,8 +1,8 @@
-drop database cubeshack;
-drop database cubeshack_test;
-create database cubeshack;
-create database cubeshack_test;
-use cubeshack;
+drop database mathsvoyage;
+drop database mathsvoyage_test;
+create database mathsvoyage;
+create database mathsvoyage_test;
+use mathsvoyage;
 source reset-create-tables.sql
-use cubeshack_test;
+use mathsvoyage_test;
 source reset-create-tables.sql

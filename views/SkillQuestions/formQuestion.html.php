@@ -3,7 +3,9 @@
           <?php $this->crsfToken(); ?>
           <div class="mb-3">
             <label for="question" class="form-label">Question</label>
-            <textarea class="form-control" name="question" id="question" rows="4" required><?= $this->esc($formVars['question'] ?? '') ?></textarea>
+            <textarea class="form-control" name="question" id="question" rows="4" required><?= $this->esc($formVars['question'] ?? '<p class="stem">Apply the distributive property to factor out the greatest common factor.</p>
+{IMAGE}
+<p>\(60m - 40\) = {MATHFIELD}</p>') ?></textarea>
 
           </div>
           <?php if (isset($errors['question'])) { ?>
@@ -20,8 +22,8 @@
             </select>
             <label for="skill_id" class="form-label">Skill</label>
           </div>
-          <?php if (isset($errors['topic_id'])) { ?>
-            <div class="alert alert-danger"><?= $this->esc($errors['topic_id']); ?></div>
+          <?php if (isset($errors['skill_id'])) { ?>
+            <div class="alert alert-danger"><?= $this->esc($errors['skill_id']); ?></div>
           <?php } ?>
 
           <div class="form-floating mb-3">
@@ -56,30 +58,4 @@
             <?php } ?>
           </div>
 
-          <div class="form-floating mb-3">
-            <input type="number" class="form-control" name="answer" id="answer" value="<?php if (isset($formVars['answer'])) {
-                echo $this->esc($formVars['answer']);
-            } ?>" maxlength="1000" required autofocus>
-            <label for="answer">Answer</label>
-          </div>
-          <?php if (isset($errors['answer'])) { ?>
-            <div class="alert alert-danger"><?= $this->esc($errors['answer']); ?></div>
-          <?php } ?>
-
-        </div>
-      </div>
-      <div class="row justify-content-center my-2">
-        <div class="col-md-6">
-          <button
-            type="submit"
-            class="g-recaptcha btn btn-primary"
-            data-sitekey="<?= $this->esc($recaptchaKey); ?>"
-            data-callback='onSubmit'
-            data-action='loginwithversion3'
-          >
-            <?= $this->esc($submitButtonText); ?> Skill Number Question
-          </button>
-        </div>
-      </div>
-    </form>
 
