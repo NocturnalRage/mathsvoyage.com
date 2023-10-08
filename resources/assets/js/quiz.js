@@ -1,9 +1,12 @@
+import * as KAS from './kas/index'
+import { renderMathInElement } from 'mathlive'
 import { Howl } from 'howler'
 import confetti from 'canvas-confetti'
 
 const startButton = document.getElementById('startBtn')
 const instructions = document.getElementById('instructions')
 const quizContainer = document.getElementById('quiz')
+const hintContainer = document.getElementById('hint')
 const feedbackContainer = document.getElementById('feedback')
 const progressContainer = document.getElementById('progress')
 const actionButton = document.getElementById('action')
@@ -24,7 +27,7 @@ let quizOptions = []
 let questionNo = 0
 let totalQuestions = 0
 let incorrectAttempts = 0
-let helpUsed = false
+let hintUsed = false
 let correctUnaidedTotal = 0
 const quizStartTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
 let quizEndTime
@@ -96,6 +99,8 @@ function askMultipleChoiceQuestion (currentQuestion) {
   const output = []
   const answers = []
 
+  output.push(quizQuestionHtml(currentQuestion))
+
   for (const option in currentQuestion.answers) {
     answers.push(
           `<div class="form-group">
@@ -105,16 +110,6 @@ function askMultipleChoiceQuestion (currentQuestion) {
             </label>
           </div>`
     )
-  }
-  output.push(
-      `<div class="quizQuestion">
-         <p class="text-end text-decoration-underline">
-           Question ${questionNo + 1} of ${totalQuestions}
-         </p>
-         <p class="text-start">${currentQuestion.question}`
-  )
-  if (currentQuestion.question_image != null) {
-    output.push(`<img class="questionImage" src="/uploads/skill-questions/${currentQuestion.question_image}" alt="${currentQuestion.question}" />`)
   }
   output.push(
        `<div class="answers">${answers.join('')}</div>
@@ -127,32 +122,28 @@ function askMultipleChoiceQuestion (currentQuestion) {
 
 function askNumericQuestion (currentQuestion) {
   const output = []
-  const answers = []
-
-  answers.push(
-        `<div class="form-floating mb-3">
-            <input class="form-control-lg" type="text" id="answer" name="answer${questionNo}">
-        </div>`
-  )
-  output.push(
-      `<div class="quizQuestion">
-         <p class="text-end text-decoration-underline">
-           Question ${questionNo + 1} of ${totalQuestions}
-         </p>
-         <p class="text-start">${currentQuestion.question}`
-  )
-  if (currentQuestion.question_image != null) {
-    output.push(`<img class="questionImage" src="/uploads/skill-questions/${currentQuestion.question_image}" alt="${currentQuestion.question}" />`)
-  }
-  output.push(
-       `<div class="answers">${answers.join('')}</div>
-        </div><!-- quizQuestion-->`
-  )
+  output.push(quizQuestionHtml(currentQuestion))
+  output.push('</div><!-- quizQuestion-->')
   quizContainer.innerHTML = output.join('')
-  const answerInput = document.getElementById('answer')
-  answerInput.addEventListener('input', () => { actionButton.disabled = false })
-  answerInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !actionButton.disabled) { processClick() } })
-  answerInput.focus()
+  const answerMathfield = document.getElementById('mf_answer')
+  answerMathfield.addEventListener('input', (ev) => {
+    ev.preventDefault()
+    if (isValidExpression()) {
+      answerMathfield.style.setProperty('border-color', 'black')
+      actionButton.disabled = false
+    } else {
+      answerMathfield.style.setProperty('border-color', 'red')
+      actionButton.disabled = true
+    }
+  })
+  renderMathInElement(quizContainer)
+  answerMathfield.addEventListener('beforeinput', (ev) => {
+    if (ev.inputType === 'insertLineBreak') {
+      ev.preventDefault()
+      processClick()
+    }
+  })
+  answerMathfield.focus()
 }
 
 function checkAnswer (currentQuestion) {
@@ -176,23 +167,8 @@ function checkMultipleChoiceAnswer (currentQuestion) {
 
   let correctOrNot = 0
   if (parseInt(choice) === correctValue) {
-    const box = actionButton.getBoundingClientRect()
-    const confettiX = (box.x + box.width / 2) / screen.width
-    const confettiY = (box.y + box.height / 2) / screen.height
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      startVelocity: 30,
-      gravity: 1.5,
-      origin: { x: confettiX, y: confettiY }
-    })
-    correctSound.play()
-    if (incorrectAttempts === 0 && !helpUsed) {
-      document.getElementById('dot' + questionNo).classList.remove('dot')
-      document.getElementById('dot' + questionNo).classList.add('dotCorrect')
-      correctUnaidedTotal++
-      correctOrNot = 1
-    }
+    showConfetti()
+    correctOrNot = correctWithoutHelp(incorrectAttempts, hintUsed)
     questionEndTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
     recordResponse(
       currentQuestion.skill_question_id,
@@ -204,12 +180,7 @@ function checkMultipleChoiceAnswer (currentQuestion) {
       questionEndTime
     )
 
-    feedbackContainer.innerHTML = `
-      <div class="alert alert-success alert-dismissible mt-2" role="alert">
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        <h4 class="alert-heading"><i class="bi bi-check"></i> Well Done!</h4>
-        <p>Keep going!</p>
-      </div>`
+    showWellDoneFeedback()
     moveOn()
   } else {
     let heading = 'Not quite yet...'
@@ -223,13 +194,21 @@ function checkMultipleChoiceAnswer (currentQuestion) {
       <div class="alert alert-info alert-dismissible mt-2" role="alert">
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         <h4 class="alert-heading"><i class="bi bi-repeat"></i> ${heading}</h4>
-        <p>Try again, <a id="helpLink" href="#">get help</a>, or <a id="skipLink" href="#">skip for now</a>.</p>
+        <p>Try again, <a id="hintLink" href="#">get help</a>, or <a id="skipLink" href="#">skip for now</a>.</p>
       </div>`
-    const helpLink = document.getElementById('helpLink')
-    helpLink.addEventListener('click', function (event) {
+    const hintLink = document.getElementById('hintLink')
+    hintLink.addEventListener('click', function (event) {
       event.preventDefault()
-      helpUsed = true
-      window.open(currentQuestion.help_slug)
+      hintUsed = true
+      const output = []
+      for (const hint in currentQuestion.hints) {
+        output.push(
+           `<h4>Hint ${parseInt(hint) + 1}</h4>
+            <p>${currentQuestion.hints[hint].hint}</p>
+            </div>`)
+      }
+      hintContainer.innerHTML = output.join('')
+      hintContainer.style.display = 'block'
     })
     const skipLink = document.getElementById('skipLink')
     skipLink.addEventListener('click', function (event) {
@@ -256,47 +235,28 @@ function checkMultipleChoiceAnswer (currentQuestion) {
 }
 
 function checkNumericAnswer (currentQuestion) {
-  let answer = convertToNumber(document.getElementById('answer').value)
-  answer = parseFloat(answer)
+  const [studentAnswer, studentExpr] = retrieveMathfieldAnswerAndExpression()
+  const correctExpr = KAS.parse(currentQuestion.answer).expr
+  const comparison = KAS.compare(studentExpr, correctExpr, { form: currentQuestion.form, simplify: currentQuestion.simplify })
 
   let correctOrNot = 0
-  if (answer === currentQuestion.answer) {
-    const box = actionButton.getBoundingClientRect()
-    const confettiX = (box.x + box.width / 2) / screen.width
-    const confettiY = (box.y + box.height / 2) / screen.height
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      startVelocity: 30,
-      gravity: 1.5,
-      origin: { x: confettiX, y: confettiY }
-    })
-    correctSound.play()
-    if (incorrectAttempts === 0 && !helpUsed) {
-      document.getElementById('dot' + questionNo).classList.remove('dot')
-      document.getElementById('dot' + questionNo).classList.add('dotCorrect')
-      correctUnaidedTotal++
-      correctOrNot = 1
-    }
+  if (comparison.equal) {
+    showConfetti()
+    correctOrNot = correctWithoutHelp(incorrectAttempts, hintUsed)
     questionEndTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
     recordResponse(
       currentQuestion.skill_question_id,
       currentQuestion.skill_question_type_id,
       null,
-      answer,
+      studentAnswer,
       correctOrNot,
       questionStartTime,
       questionEndTime
     )
 
-    feedbackContainer.innerHTML = `
-      <div class="alert alert-success alert-dismissible mt-2" role="alert">
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        <h4 class="alert-heading"><i class="bi bi-check"></i> Well Done!</h4>
-        <p>Keep going!</p>
-      </div>`
+    showWellDoneFeedback()
     moveOn()
-  } else {
+  } else if (comparison.message === null) {
     let heading = 'Not quite yet...'
     incorrectAttempts++
     if (incorrectAttempts === 2) {
@@ -308,13 +268,21 @@ function checkNumericAnswer (currentQuestion) {
       <div class="alert alert-info alert-dismissible mt-2" role="alert">
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         <h4 class="alert-heading"><i class="bi bi-repeat"></i> ${heading}</h4>
-        <p>Try again, <a id="helpLink" href="#">get help</a>, or <a id="skipLink" href="#">skip for now</a>.</p>
+        <p>Try again, <a id="hintLink" href="#">get help</a>, or <a id="skipLink" href="#">skip for now</a>.</p>
       </div>`
-    const helpLink = document.getElementById('helpLink')
-    helpLink.addEventListener('click', function (event) {
+    const hintLink = document.getElementById('hintLink')
+    hintLink.addEventListener('click', function (event) {
       event.preventDefault()
-      helpUsed = true
-      window.open(currentQuestion.help_slug)
+      hintUsed = true
+      const output = []
+      for (const hint in currentQuestion.hints) {
+        output.push(
+           `<h4>Hint ${parseInt(hint) + 1}</h4>
+            <p>${currentQuestion.hints[hint].hint}</p>
+            </div>`)
+      }
+      hintContainer.innerHTML = output.join('')
+      hintContainer.style.display = 'block'
     })
     const skipLink = document.getElementById('skipLink')
     skipLink.addEventListener('click', function (event) {
@@ -324,7 +292,7 @@ function checkNumericAnswer (currentQuestion) {
         currentQuestion.skill_question_id,
         currentQuestion.skill_question_type_id,
         null,
-        answer,
+        studentAnswer,
         correctOrNot,
         questionStartTime,
         questionEndTime
@@ -336,6 +304,13 @@ function checkNumericAnswer (currentQuestion) {
         feedbackContainer.innerHTML = ''
       }
     })
+  } else {
+    feedbackContainer.innerHTML = `
+      <div class="alert alert-info alert-dismissible mt-2" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <h4 class="alert-heading"><i class="bi bi-repeat"></i> Close...</h4>
+        <p>${comparison.message}</p>
+      </div>`
   }
 }
 
@@ -352,7 +327,7 @@ function moveOn () {
     state = NEXT_QUESTION
     actionButton.innerHTML = 'Next Question'
     incorrectAttempts = 0
-    helpUsed = false
+    hintUsed = false
   }
 }
 
@@ -452,8 +427,70 @@ function recordQuizCompletion (quizStartTime, quizEndTime) {
     .catch(error => { console.error(error) })
 }
 
+/*
 function convertToNumber (num) {
   return num.replace(/[^\d.-]/g, '')
+}
+*/
+function showConfetti () {
+  const box = actionButton.getBoundingClientRect()
+  const confettiX = (box.x + box.width / 2) / screen.width
+  const confettiY = (box.y + box.height / 2) / screen.height
+  confetti({
+    particleCount: 100,
+    spread: 70,
+    startVelocity: 30,
+    gravity: 1.5,
+    origin: { x: confettiX, y: confettiY }
+  })
+  correctSound.play()
+}
+
+function showWellDoneFeedback () {
+  feedbackContainer.innerHTML = `
+    <div class="alert alert-success alert-dismissible mt-2" role="alert">
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      <h4 class="alert-heading"><i class="bi bi-check"></i> Well Done!</h4>
+      <p>Keep going!</p>
+    </div>`
+}
+
+function correctWithoutHelp (incorrectAttempts, hintUsed) {
+  if (incorrectAttempts === 0 && !hintUsed) {
+    document.getElementById('dot' + questionNo).classList.remove('dot')
+    document.getElementById('dot' + questionNo).classList.add('dotCorrect')
+    correctUnaidedTotal++
+    return 1
+  }
+  return 0
+}
+
+function retrieveMathfieldAnswerAndExpression () {
+  let studentAnswer = document.getElementById('mf_answer').value
+  studentAnswer = studentAnswer.replace(/\\frac(\d)(\d)/g, '\\frac{$1}{$2}')
+  studentAnswer = studentAnswer.replace(/\^{}/g, '')
+  const studentExpr = KAS.parse(studentAnswer).expr
+  return [studentAnswer, studentExpr]
+}
+
+function isValidExpression () {
+  let studentAnswer = document.getElementById('mf_answer').value
+  studentAnswer = studentAnswer.replace(/\\frac(\d)(\d)/g, '\\frac{$1}{$2}')
+  studentAnswer = studentAnswer.replace(/\^{}/g, '')
+  const studentExpr = KAS.parse(studentAnswer)
+  return studentExpr.parsed
+}
+
+function quizQuestionHtml (currentQuestion) {
+  if (currentQuestion.question_image != null) {
+    currentQuestion.question = currentQuestion.question.replace(/\{IMAGE\}/g, `<img class="questionImage" src="/uploads/skill-questions/${currentQuestion.question_image}" alt="Question" />`)
+  }
+  currentQuestion.question = currentQuestion.question.replace(/\{MATHFIELD\}/g, '<math-field id="mf_answer"></math-field>')
+  return `<div class="quizQuestion">
+         <p class="text-end text-decoration-underline">
+           Question ${questionNo + 1} of ${totalQuestions}
+         </p>
+         ${currentQuestion.question}`
 }
 
 // display quiz after start button pressed

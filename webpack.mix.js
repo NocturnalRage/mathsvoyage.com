@@ -10,5 +10,7 @@ mix
   .js('resources/assets/js/general-arithmetic-quiz.js', './public/js/')
   .js('resources/assets/js/workedSolutions.js', './public/js/')
   .js('resources/assets/js/doNow.js', './public/js/')
+  .copyDirectory('node_modules/mathlive/dist/fonts', './public/js/fonts')
+  .copyDirectory('node_modules/mathlive/dist/sounds', './public/js/sounds')
   .eslint()
   .version();

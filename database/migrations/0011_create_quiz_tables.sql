@@ -21,12 +21,12 @@ INSERT INTO  skill_question_categories VALUES (1, 'Fluency', now(), now());
 INSERT INTO  skill_question_categories VALUES (2, 'Problem Solving', now(), now());
 INSERT INTO  skill_question_categories VALUES (3, 'Reasoning', now(), now());
 
-
 CREATE TABLE skill_questions (
   skill_question_id int unsigned NOT NULL AUTO_INCREMENT,
   skill_id int unsigned NOT NULL,
   skill_question_type_id tinyint unsigned NOT NULL,
   skill_question_category_id tinyint unsigned NOT NULL,
+  randomise_options boolean NOT NULL default true,
   question text NOT NULL,
   question_image varchar(255) NULL,
   created_at datetime NOT NULL,
@@ -46,6 +46,18 @@ CREATE TABLE skill_question_options (
   created_at datetime NOT NULL,
   updated_at datetime NOT NULL,
   PRIMARY KEY (skill_question_option_id),
+  FOREIGN KEY (skill_question_id) REFERENCES skill_questions(skill_question_id)
+);
+
+CREATE TABLE skill_question_hints (
+  hint_id int unsigned NOT NULL AUTO_INCREMENT,
+  skill_question_id int unsigned NOT NULL,
+  hint varchar(1000) NOT NULL,
+  hint_image varchar(255) NULL,
+  hint_order tinyint NOT NULL,
+  created_at datetime NOT NULL,
+  updated_at datetime NOT NULL,
+  PRIMARY KEY (hint_id),
   FOREIGN KEY (skill_question_id) REFERENCES skill_questions(skill_question_id)
 );
 
@@ -111,6 +123,7 @@ CREATE TABLE quiz_questions (
   quiz_id int unsigned NOT NULL,
   skill_question_id int unsigned NOT NULL,
   skill_question_option_id int unsigned NULL,
+  answer varchar(255) NULL,
   correct_unaided boolean NULL,
   created_at datetime NOT NULL,
   started_at datetime NULL,

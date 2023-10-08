@@ -129,11 +129,11 @@ class MysqlSkillsRepository implements SkillsRepository
                        sqo.option_text,
                        sqo.correct,
                        sqo.option_order,
-                       sqn.skill_question_number_id,
-                       sqn.answer
+                       sqk.skill_question_kas_id,
+                       sqk.answer
                 FROM   skill_questions sq
                 LEFT JOIN skill_question_options sqo ON sq.skill_question_id = sqo.skill_question_id
-                LEFT JOIN skill_question_numbers sqn ON sq.skill_question_id = sqn.skill_question_id
+                LEFT JOIN skill_question_kas sqk ON sq.skill_question_id = sqk.skill_question_id
                 WHERE  skill_id = ?
                 ORDER BY sq.skill_question_id, sqo.option_order';
         $stmt = $this->dbh->prepare($sql);
@@ -157,11 +157,11 @@ class MysqlSkillsRepository implements SkillsRepository
                        sqo.option_text,
                        sqo.correct,
                        sqo.option_order,
-                       sqn.skill_question_number_id,
-                       sqn.answer
+                       sqk.skill_question_kas_id,
+                       sqk.answer
                 FROM   skill_questions sq
                 LEFT JOIN skill_question_options sqo ON sq.skill_question_id = sqo.skill_question_id
-                LEFT JOIN skill_question_numbers sqn ON sq.skill_question_id = sqn.skill_question_id
+                LEFT JOIN skill_question_kas sqk ON sq.skill_question_id = sqk.skill_question_id
                 WHERE  sq.skill_id = ?
                 AND    sq.skill_question_category_id = ?
                 ORDER BY sq.skill_question_id, sqo.option_order';
@@ -186,11 +186,11 @@ class MysqlSkillsRepository implements SkillsRepository
                        sqo.option_text,
                        sqo.correct,
                        sqo.option_order,
-                       sqn.skill_question_number_id,
-                       sqn.answer
+                       sqk.skill_question_kas_id,
+                       sqk.answer
                 FROM   skill_questions sq
                 LEFT JOIN skill_question_options sqo ON sq.skill_question_id = sqo.skill_question_id
-                LEFT JOIN skill_question_numbers sqn ON sq.skill_question_id = sqn.skill_question_id
+                LEFT JOIN skill_question_kas sqk ON sq.skill_question_id = sqk.skill_question_id
                 WHERE  sq.skill_id = ?
                 ORDER BY sq.skill_question_id, sqo.option_order';
         $stmt = $this->dbh->prepare($sql);

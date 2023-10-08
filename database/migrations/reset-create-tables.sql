@@ -11,6 +11,6 @@ source 0010_create_skills_table.sql
 source 0011_create_quiz_tables.sql
 source 0012_create_worked_solutions_table.sql
 source 0013_create_videos_table.sql
-source 0014_create_skill_question_numbers_table.sql
+source 0014_create_skill_question_kas_table.sql
 source 0015_create_times_tables_table.sql
 source 0016_create_general_arithmetic_table.sql

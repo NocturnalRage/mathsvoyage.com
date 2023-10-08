@@ -166,19 +166,21 @@ class MysqlQuizzesRepository implements QuizzesRepository
                      q.user_id,
                      sq.skill_question_id,
                      sq.skill_question_type_id,
+                     sq.randomise_options,
                      sq.question,
                      sq.question_image,
                      sqo.skill_question_option_id,
                      sqo.option_text,
                      sqo.option_order,
                      sqo.correct,
-                     sqn.answer,
-                     concat("/skills/", c.curriculum_slug, "/", t.slug, "/", s.slug, "/worked-solutions") as help_slug
+                     sqk.answer,
+                     sqk.form,
+                     sqk.simplify
               FROM   quizzes q
               JOIN   quiz_questions qq on qq.quiz_id = q.quiz_id
               JOIN   skill_questions sq on sq.skill_question_id = qq.skill_question_id
               LEFT JOIN   skill_question_options sqo on sqo.skill_question_id = sq.skill_question_id
-              LEFT JOIN   skill_question_numbers sqn on sqn.skill_question_id = sq.skill_question_id
+              LEFT JOIN   skill_question_kas sqk on sqk.skill_question_id = sq.skill_question_id
               JOIN   skills s on s.skill_id = sq.skill_id
               JOIN   topics t on s.topic_id = t.topic_id
               JOIN   curricula c on t.curriculum_id = c.curriculum_id
