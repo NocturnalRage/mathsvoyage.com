@@ -184,7 +184,8 @@ class MysqlQuizzesRepository implements QuizzesRepository
               JOIN   skills s on s.skill_id = sq.skill_id
               JOIN   topics t on s.topic_id = t.topic_id
               JOIN   curricula c on t.curriculum_id = c.curriculum_id
-              WHERE  q.quiz_id = ?';
+              WHERE  q.quiz_id = ?
+              ORDER BY sq.skill_question_id, sqk.skill_question_kas_id';
         $stmt = $this->dbh->prepare($sql);
         $stmt->bind_param('i', $quizId);
         $stmt->execute();
@@ -438,5 +439,22 @@ class MysqlQuizzesRepository implements QuizzesRepository
         $stmt->close();
 
         return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getSkillQuestionHints($skillQuestionId) {
+    $sql = "SELECT h.hint_id,
+                   h.skill_question_id,
+                   h.hint,
+                   h.hint_order
+            FROM   skill_question_hints h
+            WHERE  h.skill_question_id = ?
+            ORDER BY h.hint_order";
+    $stmt = $this->dbh->prepare($sql);
+    $stmt->bind_param('i', $skillQuestionId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+    return $result->fetch_all(MYSQLI_ASSOC);
+
     }
 }

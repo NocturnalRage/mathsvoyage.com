@@ -125,32 +125,51 @@ function askNumericQuestion (currentQuestion) {
   output.push(quizQuestionHtml(currentQuestion))
   output.push('</div><!-- quizQuestion-->')
   quizContainer.innerHTML = output.join('')
-  const answerMathfield = document.getElementById('mf_answer')
-  answerMathfield.addEventListener('input', (ev) => {
-    ev.preventDefault()
-    if (isValidExpression()) {
-      answerMathfield.style.setProperty('border-color', 'black')
-      actionButton.disabled = false
-    } else {
-      answerMathfield.style.setProperty('border-color', 'red')
-      actionButton.disabled = true
+  const numAnswers = currentQuestion.answers.length
+  for (let answerNum = 0; answerNum < numAnswers; answerNum++) {
+    const mathfield = document.getElementById('mf_answer_' + answerNum)
+    if (answerNum === 0) {
+      mathfield.focus()
     }
-  })
-  renderMathInElement(quizContainer)
-  answerMathfield.addEventListener('beforeinput', (ev) => {
-    if (ev.inputType === 'insertLineBreak') {
+    mathfield.addEventListener('input', (ev) => {
       ev.preventDefault()
-      processClick()
-    }
-  })
-  answerMathfield.focus()
+      if (isValidExpression(mathfield)) {
+        mathfield.style.setProperty('border-color', 'blue')
+        actionButton.disabled = false
+      } else {
+        mathfield.style.setProperty('border-color', 'orange')
+        actionButton.disabled = true
+      }
+      if (!actionButton.disabled && ev.data === 'insertLineBreak') {
+        processClick()
+      }
+    })
+  }
+  renderMathInElement(quizContainer)
 }
 
 function checkAnswer (currentQuestion) {
   if (currentQuestion.skill_question_type_id === MULTIPLE_CHOICE) {
     checkMultipleChoiceAnswer(currentQuestion)
   } else if (currentQuestion.skill_question_type_id === NUMERIC) {
-    checkNumericAnswer(currentQuestion)
+    let allAnswered = true
+    const numAnswers = currentQuestion.answers.length
+    for (let answerNum = 0; answerNum < numAnswers; answerNum++) {
+      const mathfield = document.getElementById('mf_answer_' + answerNum)
+      if (mathfield.value === '') {
+        allAnswered = false
+      }
+    }
+    if (allAnswered) {
+      checkNumericAnswer(currentQuestion)
+    } else {
+      feedbackContainer.innerHTML = `
+        <div class="alert alert-info alert-dismissible mt-2" role="alert">
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          <h4 class="alert-heading"><i class="bi bi-repeat"></i> Answer All Questions</h4>
+          <p>There is still some unanswered questions. Make sure to answer them all before pressing enter.</p>
+        </div>`
+    }
   }
 }
 
@@ -209,6 +228,7 @@ function checkMultipleChoiceAnswer (currentQuestion) {
       }
       hintContainer.innerHTML = output.join('')
       hintContainer.style.display = 'block'
+      renderMathInElement(hintContainer)
     })
     const skipLink = document.getElementById('skipLink')
     skipLink.addEventListener('click', function (event) {
@@ -235,12 +255,30 @@ function checkMultipleChoiceAnswer (currentQuestion) {
 }
 
 function checkNumericAnswer (currentQuestion) {
-  const [studentAnswer, studentExpr] = retrieveMathfieldAnswerAndExpression()
-  const correctExpr = KAS.parse(currentQuestion.answer).expr
-  const comparison = KAS.compare(studentExpr, correctExpr, { form: currentQuestion.form, simplify: currentQuestion.simplify })
+  let studentAnswers = ''
+  let nearlyCorrect = false
+  let feedbackMessage = ''
+  const mathfields = document.querySelectorAll('math-field')
+  mathfields.forEach(element => { element.disabled = true })
+  const numAnswers = currentQuestion.answers.length
+  let totalCorrect = 0
+  for (let answerNum = 0; answerNum < numAnswers; answerNum++) {
+    const [mathfield, studentAnswer, studentExpr] = retrieveMathfieldAnswerAndExpression(answerNum)
+    const correctExpr = KAS.parse(currentQuestion.answers[answerNum]).expr
+    const comparison = KAS.compare(studentExpr, correctExpr, { form: currentQuestion.form, simplify: currentQuestion.simplify })
+    if (comparison.equal) {
+      totalCorrect++
+    } else if (comparison.message !== null) {
+      nearlyCorrect = true
+      feedbackMessage += comparison.message + ' '
+    } else {
+      mathfield.style.setProperty('border-color', 'red')
+    }
+    studentAnswers += studentAnswer + ' '
+  }
 
   let correctOrNot = 0
-  if (comparison.equal) {
+  if (totalCorrect === numAnswers) {
     showConfetti()
     correctOrNot = correctWithoutHelp(incorrectAttempts, hintUsed)
     questionEndTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
@@ -248,7 +286,7 @@ function checkNumericAnswer (currentQuestion) {
       currentQuestion.skill_question_id,
       currentQuestion.skill_question_type_id,
       null,
-      studentAnswer,
+      studentAnswers,
       correctOrNot,
       questionStartTime,
       questionEndTime
@@ -256,7 +294,7 @@ function checkNumericAnswer (currentQuestion) {
 
     showWellDoneFeedback()
     moveOn()
-  } else if (comparison.message === null) {
+  } else if (!nearlyCorrect) {
     let heading = 'Not quite yet...'
     incorrectAttempts++
     if (incorrectAttempts === 2) {
@@ -283,6 +321,7 @@ function checkNumericAnswer (currentQuestion) {
       }
       hintContainer.innerHTML = output.join('')
       hintContainer.style.display = 'block'
+      renderMathInElement(hintContainer)
     })
     const skipLink = document.getElementById('skipLink')
     skipLink.addEventListener('click', function (event) {
@@ -292,7 +331,7 @@ function checkNumericAnswer (currentQuestion) {
         currentQuestion.skill_question_id,
         currentQuestion.skill_question_type_id,
         null,
-        studentAnswer,
+        studentAnswers,
         correctOrNot,
         questionStartTime,
         questionEndTime
@@ -309,13 +348,14 @@ function checkNumericAnswer (currentQuestion) {
       <div class="alert alert-info alert-dismissible mt-2" role="alert">
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         <h4 class="alert-heading"><i class="bi bi-repeat"></i> Close...</h4>
-        <p>${comparison.message}</p>
+        <p>${feedbackMessage}</p>
       </div>`
   }
 }
 
 function moveOn () {
   // Next question or show summary
+  hintContainer.style.display = 'none'
   questionNo++
   if (questionNo >= totalQuestions) {
     quizEndTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
@@ -465,27 +505,35 @@ function correctWithoutHelp (incorrectAttempts, hintUsed) {
   return 0
 }
 
-function retrieveMathfieldAnswerAndExpression () {
-  let studentAnswer = document.getElementById('mf_answer').value
-  studentAnswer = studentAnswer.replace(/\\frac(\d)(\d)/g, '\\frac{$1}{$2}')
-  studentAnswer = studentAnswer.replace(/\^{}/g, '')
+function retrieveMathfieldAnswerAndExpression (answerNum) {
+  const mathfield = document.getElementById('mf_answer_' + answerNum)
+  const studentAnswer = removeNonStandardLatex(mathfield.value)
   const studentExpr = KAS.parse(studentAnswer).expr
-  return [studentAnswer, studentExpr]
+  return [mathfield, studentAnswer, studentExpr]
 }
 
-function isValidExpression () {
-  let studentAnswer = document.getElementById('mf_answer').value
-  studentAnswer = studentAnswer.replace(/\\frac(\d)(\d)/g, '\\frac{$1}{$2}')
-  studentAnswer = studentAnswer.replace(/\^{}/g, '')
+function isValidExpression (mathfield) {
+  if (mathfield.value === '') {
+    return false
+  }
+  const studentAnswer = removeNonStandardLatex(mathfield.value)
   const studentExpr = KAS.parse(studentAnswer)
   return studentExpr.parsed
+}
+
+function removeNonStandardLatex (input) {
+  input = input.replace(/\\frac(\d)(\d)/g, '\\frac{$1}{$2}')
+  input = input.replace(/\^{}/g, '')
+  input = input.replace(/_{}/g, '')
+  return input
 }
 
 function quizQuestionHtml (currentQuestion) {
   if (currentQuestion.question_image != null) {
     currentQuestion.question = currentQuestion.question.replace(/\{IMAGE\}/g, `<img class="questionImage" src="/uploads/skill-questions/${currentQuestion.question_image}" alt="Question" />`)
   }
-  currentQuestion.question = currentQuestion.question.replace(/\{MATHFIELD\}/g, '<math-field id="mf_answer"></math-field>')
+  let mathfieldId = 0
+  currentQuestion.question = currentQuestion.question.replace(/\{MATHFIELD\}/g, function () { return '<math-field id="mf_answer_' + (mathfieldId++) + '"></math-field>' })
   return `<div class="quizQuestion">
          <p class="text-end text-decoration-underline">
            Question ${questionNo + 1} of ${totalQuestions}
@@ -497,5 +545,4 @@ function quizQuestionHtml (currentQuestion) {
 startButton.addEventListener('click', fetchQuestions)
 
 actionButton.disabled = true
-// on submit, check answer
 actionButton.addEventListener('click', processClick)

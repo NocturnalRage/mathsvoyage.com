@@ -76,6 +76,8 @@
             <div class="alert alert-danger"><?= $this->esc($errors['option4']); ?></div>
           <?php } ?>
 
+<?php include __DIR__.'/hints.html.php'; ?>
+
         </div>
       </div>
       <div class="row justify-content-center my-2">
