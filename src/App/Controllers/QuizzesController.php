@@ -62,61 +62,69 @@ class QuizzesController extends Controller
         }
 
         $answers = [];
-        $quizOption = [];
+        $answer = [];
         $currentQuestion = $options[0]['question'];
         $currentQuestionImage = $options[0]['question_image'];
         $currentSkillQuestionId = $options[0]['skill_question_id'];
         $currentSkillQuestionTypeId = $options[0]['skill_question_type_id'];
-        $currentAnswer = $options[0]['answer'];
         $currentRandomise = $options[0]['randomise_options'];
         $currentForm = $options[0]['form'];
         $currentSimplify = $options[0]['simplify'];
 
         foreach ($options as $option) {
             if ($option['skill_question_id'] != $currentSkillQuestionId) {
-                if ($currentRandomise) {
-                  shuffle($quizOption);
+                if ($currentSkillQuestionTypeId === 1 && $currentRandomise) {
+                  shuffle($answer);
                 }
+                $hints = $quizzes->getSkillQuestionHints(
+                  $currentSkillQuestionId
+                );
                 $quizOptions[] = [
                     'question' => $currentQuestion,
                     'question_image' => $currentQuestionImage,
                     'skill_question_id' => $currentSkillQuestionId,
                     'skill_question_type_id' => $currentSkillQuestionTypeId,
                     'randomise_options' => $currentRandomise,
-                    'answer' => $currentAnswer,
                     'form' => $currentForm,
                     'simplify' => $currentSimplify,
-                    'answers' => $quizOption,
+                    'answers' => $answer,
+                    'hints' => $hints,
                 ];
-                $quizOption = [];
+                $answer = [];
                 $currentQuestion = $option['question'];
                 $currentQuestionImage = $option['question_image'];
                 $currentSkillQuestionId = $option['skill_question_id'];
                 $currentSkillQuestionTypeId = $option['skill_question_type_id'];
                 $currentRandomise = $option['randomise_options'];
-                $currentAnswer = $option['answer'];
                 $currentForm = $option['form'];
                 $currentSimplify = $option['simplify'];
             }
-            $quizOption[] = [
-                'skill_question_option_id' => $option['skill_question_option_id'],
-                'option' => $option['option_text'],
-                'option_order' => $option['option_order'],
-                'correct' => $option['correct'],
-            ];
+            if ($currentSkillQuestionTypeId === 1) {
+              $answer[] = [
+                  'skill_question_option_id' => $option['skill_question_option_id'],
+                  'option' => $option['option_text'],
+                  'option_order' => $option['option_order'],
+                  'correct' => $option['correct'],
+              ];
+            } else {
+              $answer[] = $option['answer'];
+            }
         }
-        if ($currentRandomise) {
-          shuffle($quizOption);
+        if ($currentSkillQuestionTypeId === 1 && $currentRandomise) {
+          shuffle($answer);
         }
+        $hints = $quizzes->getSkillQuestionHints(
+          $currentSkillQuestionId
+        );
         $quizOptions[] = [
             'question' => $currentQuestion,
             'question_image' => $currentQuestionImage,
             'skill_question_id' => $currentSkillQuestionId,
             'skill_question_type_id' => $currentSkillQuestionTypeId,
-            'answer' => $currentAnswer,
             'form' => $currentForm,
             'simplify' => $currentSimplify,
-            'answers' => $quizOption,
+            'answers' => $answer,
+            'hints' => $hints,
         ];
 
         // Give questions in random order

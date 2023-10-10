@@ -61,4 +61,6 @@ interface QuizzesRepository
     public function findIncompleteCurriculumQuizInfo($curriculumId, $userId);
 
     public function getAllCurriculumQuestions($curriculumId);
+
+    public function getSkillQuestionHints($skillQuestionId);
 }

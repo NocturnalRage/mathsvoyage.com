@@ -71,6 +71,9 @@ class SkillQuestionsController extends Controller
             'option2' => ['required', 'max:1000'],
             'option3' => ['required', 'max:1000'],
             'option4' => ['required', 'max:1000'],
+            'hint1' => ['required', 'max:1000'],
+            'hint2' => ['required', 'max:1000'],
+            'hint3' => ['required', 'max:1000'],
         ]);
         $randomiseOptions = 1;
         if (empty($this->request->post['randomise_options'])) {
@@ -132,6 +135,21 @@ class SkillQuestionsController extends Controller
             4,
             $this->request->post['correctOption'] == '4' ? 1 : 0
         );
+        $hintId = $skillQuestions->createHint(
+            $skillQuestionId,
+            $this->request->post['hint1'],
+            1,
+        );
+        $hintId = $skillQuestions->createHint(
+            $skillQuestionId,
+            $this->request->post['hint2'],
+            2,
+        );
+        $hintId = $skillQuestions->createHint(
+            $skillQuestionId,
+            $this->request->post['hint3'],
+            3,
+        );
 
         return $this->redirectTo('/curriculum');
     }
@@ -150,8 +168,22 @@ class SkillQuestionsController extends Controller
             'question' => ['required', 'max:8000'],
             'skill_id' => ['required', 'int'],
             'skill_question_category_id' => ['required', 'int'],
-            'answer' => ['required'],
+            'hint1' => ['required', 'max:1000'],
+            'hint2' => ['required', 'max:1000'],
+            'hint3' => ['required', 'max:1000'],
         ]);
+        $numMathfields = substr_count($this->request->post['question'], '{MATHFIELD}');
+        if ($numMathfields === 0) {
+            $errors['question'] = 'You must have at least one {MATHFIELD} for this type of question';
+            $this->request->session['errors'] = $errors;
+            $this->request->session['formVars'] = $this->request->request;
+            $this->request->flash('Please add a {MATHFIELD}', 'danger');
+
+            return $this->redirectTo('/skill-questions/newKasAnswer');
+        }
+        for ($i = 0; $i < $numMathfields; $i++) {
+          $this->request->validate(['answer'.$i => ['required', 'max:1000']]);
+        }
 
         $skillQuestionId = $skillQuestions->create(
             $this->request->post['question'],
@@ -184,11 +216,29 @@ class SkillQuestionsController extends Controller
             }
         }
 
-        $skillQuestionNumberId = $skillQuestions->createKasAnswer(
+        for ($i = 0; $i < $numMathfields; $i++) {
+          $skillQuestionKasId = $skillQuestions->createKasAnswer(
+              $skillQuestionId,
+              $this->request->post['answer'.$i],
+              empty($this->request->post['form'.$i]) ? 0 : 1,
+              empty($this->request->post['simplify'.$i]) ? 0 : 1
+          );
+        }
+
+        $hintId = $skillQuestions->createHint(
             $skillQuestionId,
-            $this->request->post['answer'],
+            $this->request->post['hint1'],
             1,
-            1
+        );
+        $hintId = $skillQuestions->createHint(
+            $skillQuestionId,
+            $this->request->post['hint2'],
+            2,
+        );
+        $hintId = $skillQuestions->createHint(
+            $skillQuestionId,
+            $this->request->post['hint3'],
+            3,
         );
 
         return $this->redirectTo('/curriculum');
