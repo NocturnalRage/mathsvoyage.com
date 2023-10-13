@@ -75,6 +75,36 @@ class SkillQuestionsController extends Controller
             'hint2' => ['required', 'max:1000'],
             'hint3' => ['required', 'max:1000'],
         ]);
+
+        $numMathfields = substr_count($this->request->post['question'], '{MATHFIELD}');
+        if ($numMathfields > 0) {
+            $errors['question'] = 'You cannot have any {MATHFIELD} for a multiple choice question';
+            $this->request->session['errors'] = $errors;
+            $this->request->session['formVars'] = $this->request->request;
+            $this->request->flash('Please remove {MATHFIELD} from the question', 'danger');
+
+            return $this->redirectTo('/skill-questions/new');
+        }
+        $questionImageInfo = $this->request->files['question_image'];
+        $numImageTags = substr_count($this->request->post['question'], '{IMAGE}');
+        if ($numImageTags > 1) {
+            $errors['question'] = 'You cannot have more than one {IMAGE} for a question';
+            $this->request->session['errors'] = $errors;
+            $this->request->session['formVars'] = $this->request->request;
+            $this->request->flash('Please ensure there is only one {IMAGE} field', 'danger');
+
+            return $this->redirectTo('/skill-questions/new');
+        } else if ($numImageTags == 1) {
+          if (empty($questionImageInfo) || $questionImageInfo['size'] <= 0) {
+              $errors['question_image'] = 'You must upload an image for the {IMAGE} tag';
+              $this->request->session['errors'] = $errors;
+              $this->request->session['formVars'] = $this->request->request;
+              $this->request->flash('Please ensure you upload an image for the {IMAGE} tag', 'danger');
+
+              return $this->redirectTo('/skill-questions/new');
+          }
+        }
+
         $randomiseOptions = 1;
         if (empty($this->request->post['randomise_options'])) {
           $randomiseOptions = 0;
@@ -185,6 +215,26 @@ class SkillQuestionsController extends Controller
           $this->request->validate(['answer'.$i => ['required', 'max:1000']]);
         }
 
+        $questionImageInfo = $this->request->files['question_image'];
+        $numImageTags = substr_count($this->request->post['question'], '{IMAGE}');
+        if ($numImageTags > 1) {
+            $errors['question'] = 'You cannot have more than one {IMAGE} for a question';
+            $this->request->session['errors'] = $errors;
+            $this->request->session['formVars'] = $this->request->request;
+            $this->request->flash('Please ensure there is only one {IMAGE} field', 'danger');
+
+            return $this->redirectTo('/skill-questions/newKasAnswer');
+        } else if ($numImageTags == 1) {
+          if (empty($questionImageInfo) || $questionImageInfo['size'] <= 0) {
+              $errors['question_image'] = 'You must upload an image for the {IMAGE} tag';
+              $this->request->session['errors'] = $errors;
+              $this->request->session['formVars'] = $this->request->request;
+              $this->request->flash('Please ensure you upload an image for the {IMAGE} tag', 'danger');
+
+              return $this->redirectTo('/skill-questions/newKasAnswer');
+          }
+        }
+
         $skillQuestionId = $skillQuestions->create(
             $this->request->post['question'],
             $this->request->post['skill_id'],
@@ -194,14 +244,13 @@ class SkillQuestionsController extends Controller
         );
 
         // Process image
-        $questionImageInfo = $this->request->files['question_image'];
         if (! empty($questionImageInfo) && $questionImageInfo['size'] > 0) {
             if (! $this->isSkillQuestionImageValid($questionImageInfo)) {
                 $this->request->session['errors'] = $this->errors;
                 $this->request->session['formVars'] = $this->request->request;
                 $this->request->flash('The image was not valid!', 'danger');
 
-                return $this->redirectTo('/skill-questions/new');
+                return $this->redirectTo('/skill-questions/newKasAnswer');
             }
             $questionImage = $this->moveFile(
                 'uploads/skill-questions',
