@@ -441,20 +441,22 @@ class MysqlQuizzesRepository implements QuizzesRepository
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function getSkillQuestionHints($skillQuestionId) {
-    $sql = "SELECT h.hint_id,
+    public function getSkillQuestionHints($skillQuestionId)
+    {
+        $sql = 'SELECT h.hint_id,
                    h.skill_question_id,
                    h.hint,
                    h.hint_order
             FROM   skill_question_hints h
             WHERE  h.skill_question_id = ?
-            ORDER BY h.hint_order";
-    $stmt = $this->dbh->prepare($sql);
-    $stmt->bind_param('i', $skillQuestionId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $stmt->close();
-    return $result->fetch_all(MYSQLI_ASSOC);
+            ORDER BY h.hint_order';
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->bind_param('i', $skillQuestionId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        return $result->fetch_all(MYSQLI_ASSOC);
 
     }
 }

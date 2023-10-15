@@ -93,6 +93,7 @@ function askQuestion (currentQuestion) {
   } else if (currentQuestion.skill_question_type_id === NUMERIC) {
     askNumericQuestion(currentQuestion)
   }
+  renderMathInElement(quizContainer)
 }
 
 function askMultipleChoiceQuestion (currentQuestion) {
@@ -145,7 +146,6 @@ function askNumericQuestion (currentQuestion) {
       }
     })
   }
-  renderMathInElement(quizContainer)
 }
 
 function checkAnswer (currentQuestion) {
@@ -295,6 +295,7 @@ function checkNumericAnswer (currentQuestion) {
     showWellDoneFeedback()
     moveOn()
   } else if (!nearlyCorrect) {
+    mathfields.forEach(element => { element.disabled = false })
     let heading = 'Not quite yet...'
     incorrectAttempts++
     if (incorrectAttempts === 2) {
@@ -344,6 +345,7 @@ function checkNumericAnswer (currentQuestion) {
       }
     })
   } else {
+    mathfields.forEach(element => { element.disabled = false })
     feedbackContainer.innerHTML = `
       <div class="alert alert-info alert-dismissible mt-2" role="alert">
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>

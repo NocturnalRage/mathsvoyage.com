@@ -148,7 +148,8 @@ class MysqlSkillQuestionsRepository implements SkillQuestionsRepository
         return $rowsUpdated;
     }
 
-    public function createHint($skill_question_id, $hint, $hintOrder) {
+    public function createHint($skill_question_id, $hint, $hintOrder)
+    {
         $sql = 'INSERT INTO skill_question_hints (
               hint_id,
               skill_question_id,
