@@ -211,7 +211,7 @@ class CurriculaController extends Controller
         }
         $questionBank = $quizzes->getAllCurriculumQuestions($curriculumId);
         shuffle($questionBank);
-        $totalQuestions = 20;
+        $totalQuestions = 30;
         $quizId = $quizzes->createCurriculumQuiz($curriculumId, $userId);
         if ($totalQuestions > count($questionBank)) {
             $totalQuestions = count($questionBank);
