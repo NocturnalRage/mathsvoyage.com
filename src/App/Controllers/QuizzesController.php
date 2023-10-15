@@ -74,10 +74,10 @@ class QuizzesController extends Controller
         foreach ($options as $option) {
             if ($option['skill_question_id'] != $currentSkillQuestionId) {
                 if ($currentSkillQuestionTypeId === 1 && $currentRandomise) {
-                  shuffle($answer);
+                    shuffle($answer);
                 }
                 $hints = $quizzes->getSkillQuestionHints(
-                  $currentSkillQuestionId
+                    $currentSkillQuestionId
                 );
                 $quizOptions[] = [
                     'question' => $currentQuestion,
@@ -100,21 +100,21 @@ class QuizzesController extends Controller
                 $currentSimplify = $option['simplify'];
             }
             if ($currentSkillQuestionTypeId === 1) {
-              $answer[] = [
-                  'skill_question_option_id' => $option['skill_question_option_id'],
-                  'option' => $option['option_text'],
-                  'option_order' => $option['option_order'],
-                  'correct' => $option['correct'],
-              ];
+                $answer[] = [
+                    'skill_question_option_id' => $option['skill_question_option_id'],
+                    'option' => $option['option_text'],
+                    'option_order' => $option['option_order'],
+                    'correct' => $option['correct'],
+                ];
             } else {
-              $answer[] = $option['answer'];
+                $answer[] = $option['answer'];
             }
         }
         if ($currentSkillQuestionTypeId === 1 && $currentRandomise) {
-          shuffle($answer);
+            shuffle($answer);
         }
         $hints = $quizzes->getSkillQuestionHints(
-          $currentSkillQuestionId
+            $currentSkillQuestionId
         );
         $quizOptions[] = [
             'question' => $currentQuestion,

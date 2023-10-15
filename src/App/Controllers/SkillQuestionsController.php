@@ -69,8 +69,6 @@ class SkillQuestionsController extends Controller
             'correctOption' => ['required', 'int'],
             'option1' => ['required', 'max:1000'],
             'option2' => ['required', 'max:1000'],
-            'option3' => ['required', 'max:1000'],
-            'option4' => ['required', 'max:1000'],
             'hint1' => ['required', 'max:1000'],
             'hint2' => ['required', 'max:1000'],
             'hint3' => ['required', 'max:1000'],
@@ -94,20 +92,20 @@ class SkillQuestionsController extends Controller
             $this->request->flash('Please ensure there is only one {IMAGE} field', 'danger');
 
             return $this->redirectTo('/skill-questions/new');
-        } else if ($numImageTags == 1) {
-          if (empty($questionImageInfo) || $questionImageInfo['size'] <= 0) {
-              $errors['question_image'] = 'You must upload an image for the {IMAGE} tag';
-              $this->request->session['errors'] = $errors;
-              $this->request->session['formVars'] = $this->request->request;
-              $this->request->flash('Please ensure you upload an image for the {IMAGE} tag', 'danger');
+        } elseif ($numImageTags == 1) {
+            if (empty($questionImageInfo) || $questionImageInfo['size'] <= 0) {
+                $errors['question_image'] = 'You must upload an image for the {IMAGE} tag';
+                $this->request->session['errors'] = $errors;
+                $this->request->session['formVars'] = $this->request->request;
+                $this->request->flash('Please ensure you upload an image for the {IMAGE} tag', 'danger');
 
-              return $this->redirectTo('/skill-questions/new');
-          }
+                return $this->redirectTo('/skill-questions/new');
+            }
         }
 
         $randomiseOptions = 1;
         if (empty($this->request->post['randomise_options'])) {
-          $randomiseOptions = 0;
+            $randomiseOptions = 0;
         }
 
         $skillQuestionId = $skillQuestions->create(
@@ -153,18 +151,22 @@ class SkillQuestionsController extends Controller
             2,
             $this->request->post['correctOption'] == '2' ? 1 : 0
         );
-        $skillQuestionOptionId = $skillQuestions->createOption(
-            $skillQuestionId,
-            $this->request->post['option3'],
-            3,
-            $this->request->post['correctOption'] == '3' ? 1 : 0
-        );
-        $skillQuestionOptionId = $skillQuestions->createOption(
-            $skillQuestionId,
-            $this->request->post['option4'],
-            4,
-            $this->request->post['correctOption'] == '4' ? 1 : 0
-        );
+        if (! empty($this->request->post['option3'])) {
+            $skillQuestionOptionId = $skillQuestions->createOption(
+                $skillQuestionId,
+                $this->request->post['option3'],
+                3,
+                $this->request->post['correctOption'] == '3' ? 1 : 0
+            );
+        }
+        if (! empty($this->request->post['option4'])) {
+            $skillQuestionOptionId = $skillQuestions->createOption(
+                $skillQuestionId,
+                $this->request->post['option4'],
+                4,
+                $this->request->post['correctOption'] == '4' ? 1 : 0
+            );
+        }
         $hintId = $skillQuestions->createHint(
             $skillQuestionId,
             $this->request->post['hint1'],
@@ -212,7 +214,7 @@ class SkillQuestionsController extends Controller
             return $this->redirectTo('/skill-questions/newKasAnswer');
         }
         for ($i = 0; $i < $numMathfields; $i++) {
-          $this->request->validate(['answer'.$i => ['required', 'max:1000']]);
+            $this->request->validate(['answer'.$i => ['required', 'max:1000']]);
         }
 
         $questionImageInfo = $this->request->files['question_image'];
@@ -224,15 +226,15 @@ class SkillQuestionsController extends Controller
             $this->request->flash('Please ensure there is only one {IMAGE} field', 'danger');
 
             return $this->redirectTo('/skill-questions/newKasAnswer');
-        } else if ($numImageTags == 1) {
-          if (empty($questionImageInfo) || $questionImageInfo['size'] <= 0) {
-              $errors['question_image'] = 'You must upload an image for the {IMAGE} tag';
-              $this->request->session['errors'] = $errors;
-              $this->request->session['formVars'] = $this->request->request;
-              $this->request->flash('Please ensure you upload an image for the {IMAGE} tag', 'danger');
+        } elseif ($numImageTags == 1) {
+            if (empty($questionImageInfo) || $questionImageInfo['size'] <= 0) {
+                $errors['question_image'] = 'You must upload an image for the {IMAGE} tag';
+                $this->request->session['errors'] = $errors;
+                $this->request->session['formVars'] = $this->request->request;
+                $this->request->flash('Please ensure you upload an image for the {IMAGE} tag', 'danger');
 
-              return $this->redirectTo('/skill-questions/newKasAnswer');
-          }
+                return $this->redirectTo('/skill-questions/newKasAnswer');
+            }
         }
 
         $skillQuestionId = $skillQuestions->create(
@@ -266,12 +268,12 @@ class SkillQuestionsController extends Controller
         }
 
         for ($i = 0; $i < $numMathfields; $i++) {
-          $skillQuestionKasId = $skillQuestions->createKasAnswer(
-              $skillQuestionId,
-              $this->request->post['answer'.$i],
-              empty($this->request->post['form'.$i]) ? 0 : 1,
-              empty($this->request->post['simplify'.$i]) ? 0 : 1
-          );
+            $skillQuestionKasId = $skillQuestions->createKasAnswer(
+                $skillQuestionId,
+                $this->request->post['answer'.$i],
+                empty($this->request->post['form'.$i]) ? 0 : 1,
+                empty($this->request->post['simplify'.$i]) ? 0 : 1
+            );
         }
 
         $hintId = $skillQuestions->createHint(
