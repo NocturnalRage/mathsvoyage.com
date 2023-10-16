@@ -214,7 +214,7 @@ class SkillQuestionsController extends Controller
             return $this->redirectTo('/skill-questions/newKasAnswer');
         }
         for ($i = 0; $i < $numMathfields; $i++) {
-            $this->request->validate(['answer'.$i => ['required', 'max:1000']]);
+            $this->request->validate(['answer'.$i => ['set', 'max:1000']]);
         }
 
         $questionImageInfo = $this->request->files['question_image'];

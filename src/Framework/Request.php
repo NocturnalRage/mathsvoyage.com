@@ -274,6 +274,11 @@ class Request
                         $errors[$field] = 'Required field';
                         break;
                     }
+                } elseif ($rule == 'set') {
+                    if (! isset($this->request[$field])) {
+                        $errors[$field] = 'Field must be set';
+                        break;
+                    }
                 } elseif (substr($rule, 0, 4) == 'min:') {
                     $ruleAndMin = explode(':', $rule);
                     $min = intval($ruleAndMin[1]);
@@ -298,7 +303,7 @@ class Request
                         $errors[$field] = 'Not an integer';
                         break;
                     }
-                } elseif ($rule == 'int') {
+                } elseif ($rule == 'float') {
                     if (filter_var($this->request[$field], FILTER_VALIDATE_FLOAT) === false) {
                         $errors[$field] = 'Not a float';
                         break;
