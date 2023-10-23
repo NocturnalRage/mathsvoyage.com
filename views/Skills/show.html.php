@@ -15,24 +15,26 @@ include __DIR__.'/../layout/navbar.html.php';
         <?php foreach ($questions as $question) { ?>
           <?php if ($questionId != $question['skill_question_id']) { ?>
             <?php if ($questionId != 0) { ?> 
+                    </div>
+                  </div>
                 </div>
-              </div>
             <?php } ?>
             <?php $questionId = $question['skill_question_id']; ?>
             <?php $questionNo++; ?>
             <div class="card">
               <div class="card-body">
-                <p>
-                  <a href="/skill-questions/<?= $this->esc($questionId); ?>">
-                    Question <?= $this->esc($questionNo); ?>
-                  </a>
-                </p>
-                <h2 class="card-title">
-                  <?= $this->esc($question['question']) ?>
-                </h2>
+                <div class="card-title">
+                  <h2>
+                    <a href="/skill-questions/<?= $this->esc($questionId); ?>">
+                      Question <?= $this->esc($questionNo); ?>
+                    </a>
+                  </h2>
+                </div>
+                <div class="card-text">
+                    <?= str_replace('{MATHFIELD}', '<math-field></math-field>',$question['question']) ?>
                 <?php if ($question['question_image']) { ?>
-                     <img src="/uploads/skill-questions/<?= $this->esc($question['question_image']); ?>" alt="<?= $this->esc($question['question_image']); ?>" class="questionImage"/>
-                <?php } ?>
+                  <img src="/uploads/skill-questions/<?= $this->esc($question['question_image']); ?>" alt="<?= $this->esc($question['question_image']); ?>" class="questionImage"/>
+              <?php } ?>
           <?php } ?>
                 <?php if ($question['skill_question_type_id'] == 1) { ?>
                   <?php if ($question['correct'] == 1) { ?>
@@ -44,13 +46,20 @@ include __DIR__.'/../layout/navbar.html.php';
                   <p><?= $this->esc($question['answer']); ?></p>
                 <?php } ?>
         <?php } ?>
-              </div>
             </div>
+          </div>
+        </div>
       </div>
-    </div>
 <?php
 include __DIR__.'/../layout/footer.html.php';
 ?>
   </div><!-- container -->
+  <script type="module">
+    window.addEventListener("DOMContentLoaded", () =>
+      import("https://unpkg.com/mathlive?module").then((mathlive) =>
+        mathlive.renderMathInDocument()
+      )
+    );
+  </script>
 </body>
 </html>
