@@ -9,14 +9,21 @@
           <?php if (isset($errors['answer0'])) { ?>
             <div class="alert alert-danger"><?= $this->esc($errors['answer0']); ?></div>
           <?php } ?>
-          <div class="mb-3">
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="y" id="form0" name="form0" checked>
-              <label class="form-check-label" for="form0">
-                Must be same form
-              </label>
-            </div>
+
+          <div class="form-floating mb-3">
+            <select class="form-select" aria-label="Select Numeric Type" name="numeric_type0" id="numeric_type0">
+              <?php foreach ($numericTypes as $numericType) { ?>
+                <option <?php if ($numericType['numeric_type_id'] == ($formVars['numeric_type_id'] ?? '')) {
+                    echo 'selected';
+                } ?> value="<?= $this->esc($numericType['numeric_type_id']); ?>"><?= $this->esc($numericType['title']); ?></option>
+              <?php } ?>
+            </select>
+            <label for="numeric_type0" class="form-label">Numeric Type</label>
           </div>
+          <?php if (isset($errors['numeric_type_id'])) { ?>
+            <div class="alert alert-danger"><?= $this->esc($errors['numeric_type_id']); ?></div>
+          <?php } ?>
+
           <div class="mb-3">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" value="y" id="simplify0" name="simplify0" checked>
@@ -35,14 +42,21 @@
           <?php if (isset($errors['answer1'])) { ?>
             <div class="alert alert-danger"><?= $this->esc($errors['answer1']); ?></div>
           <?php } ?>
-          <div class="mb-3">
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="y" id="form1" name="form1" checked>
-              <label class="form-check-label" for="form1">
-                Must be same form
-              </label>
-            </div>
+
+          <div class="form-floating mb-3">
+            <select class="form-select" aria-label="Select Numeric Type" name="numeric_type1" id="numeric_type1">
+              <?php foreach ($numericTypes as $numericType) { ?>
+                <option <?php if ($numericType['numeric_type_id'] == ($formVars['numeric_type_id'] ?? '')) {
+                    echo 'selected';
+                } ?> value="<?= $this->esc($numericType['numeric_type_id']); ?>"><?= $this->esc($numericType['title']); ?></option>
+              <?php } ?>
+            </select>
+            <label for="numeric_type1" class="form-label">Numeric Type</label>
           </div>
+          <?php if (isset($errors['numeric_type_id'])) { ?>
+            <div class="alert alert-danger"><?= $this->esc($errors['numeric_type_id']); ?></div>
+          <?php } ?>
+
           <div class="mb-3">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" value="y" id="simplify1" name="simplify1" checked>
@@ -61,14 +75,21 @@
           <?php if (isset($errors['answer2'])) { ?>
             <div class="alert alert-danger"><?= $this->esc($errors['answer1']); ?></div>
           <?php } ?>
-          <div class="mb-3">
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="y" id="form2" name="form2" checked>
-              <label class="form-check-label" for="form2">
-                Must be same form
-              </label>
-            </div>
+
+          <div class="form-floating mb-3">
+            <select class="form-select" aria-label="Select Numeric Type" name="numeric_type2" id="numeric_type2">
+              <?php foreach ($numericTypes as $numericType) { ?>
+                <option <?php if ($numericType['numeric_type_id'] == ($formVars['numeric_type_id'] ?? '')) {
+                    echo 'selected';
+                } ?> value="<?= $this->esc($numericType['numeric_type_id']); ?>"><?= $this->esc($numericType['title']); ?></option>
+              <?php } ?>
+            </select>
+            <label for="numeric_type2" class="form-label">Numeric Type</label>
           </div>
+          <?php if (isset($errors['numeric_type_id'])) { ?>
+            <div class="alert alert-danger"><?= $this->esc($errors['numeric_type_id']); ?></div>
+          <?php } ?>
+
           <div class="mb-3">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" value="y" id="simplify2" name="simplify2" checked>
@@ -87,14 +108,21 @@
           <?php if (isset($errors['answer3'])) { ?>
             <div class="alert alert-danger"><?= $this->esc($errors['answer3']); ?></div>
           <?php } ?>
-          <div class="mb-3">
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="y" id="form3" name="form3" checked>
-              <label class="form-check-label" for="form3">
-                Must be same form
-              </label>
-            </div>
+
+          <div class="form-floating mb-3">
+            <select class="form-select" aria-label="Select Numeric Type" name="numeric_type3" id="numeric_type3">
+              <?php foreach ($numericTypes as $numericType) { ?>
+                <option <?php if ($numericType['numeric_type_id'] == ($formVars['numeric_type_id'] ?? '')) {
+                    echo 'selected';
+                } ?> value="<?= $this->esc($numericType['numeric_type_id']); ?>"><?= $this->esc($numericType['title']); ?></option>
+              <?php } ?>
+            </select>
+            <label for="numeric_type3" class="form-label">Numeric Type</label>
           </div>
+          <?php if (isset($errors['numeric_type_id'])) { ?>
+            <div class="alert alert-danger"><?= $this->esc($errors['numeric_type_id']); ?></div>
+          <?php } ?>
+
           <div class="mb-3">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" value="y" id="simplify3" name="simplify3" checked>
@@ -118,9 +146,8 @@
             data-callback='onSubmit'
             data-action='loginwithversion3'
           >
-            <?= $this->esc($submitButtonText); ?> Skill Question - KAS Answer
+            <?= $this->esc($submitButtonText); ?> Skill Question - Numeric Answer
           </button>
         </div>
       </div>
     </form>
-

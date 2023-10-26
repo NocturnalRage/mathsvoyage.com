@@ -21,6 +21,8 @@ interface SkillQuestionsRepository
 
     public function createKasAnswer($skill_question_id, $answer, $form, $simplify);
 
+    public function createNumericAnswer($skill_question_id, $numeric_type_id, $answer, $simplify);
+
     public function updateImage($skill_question_id, $question_image);
 
     public function createHint($skill_question_id, $hint, $hintOrder);

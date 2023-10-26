@@ -37,12 +37,35 @@ class SkillQuestionsController extends Controller
         }
 
         $this->response->setVars([
-            'pageTitle' => 'Add New Kas Answer Question',
+            'pageTitle' => 'Add New Question - KAS Answer',
             'metaDescription' => 'Add a new Kas answer question',
             'activeLink' => 'Curricula',
             'submitButtonText' => 'Create',
             'skills' => $skills->all(),
             'categories' => $skills->getSkillQuestionCategories(),
+            'recaptchaKey' => $recaptcha->getRecaptchaKey(),
+        ]);
+        $this->addSessionVar('errors');
+        $this->addSessionVar('formVars');
+        $this->addSessionVar('flash');
+
+        return $this->response;
+    }
+
+    public function newNumericAnswer(SkillsRepository $skills, RecaptchaClient $recaptcha)
+    {
+        if (! $this->isAdmin()) {
+            return $this->redirectTo('/curriculum');
+        }
+
+        $this->response->setVars([
+            'pageTitle' => 'Add New Question - Numeric Answer',
+            'metaDescription' => 'Add a new numeric question',
+            'activeLink' => 'Curricula',
+            'submitButtonText' => 'Create',
+            'skills' => $skills->all(),
+            'categories' => $skills->getSkillQuestionCategories(),
+            'numericTypes' => $skills->getNumericTypes(),
             'recaptchaKey' => $recaptcha->getRecaptchaKey(),
         ]);
         $this->addSessionVar('errors');
@@ -240,7 +263,7 @@ class SkillQuestionsController extends Controller
         $skillQuestionId = $skillQuestions->create(
             $this->request->post['question'],
             $this->request->post['skill_id'],
-            2, /* Numeric Question Type */
+            2, /* Expression Question Type */
             $this->request->post['skill_question_category_id'],
             0 /* randomise_options - not relevant for this question type */
         );
@@ -272,6 +295,116 @@ class SkillQuestionsController extends Controller
                 $skillQuestionId,
                 $this->request->post['answer'.$i],
                 empty($this->request->post['form'.$i]) ? 0 : 1,
+                empty($this->request->post['simplify'.$i]) ? 0 : 1
+            );
+        }
+
+        $hintId = $skillQuestions->createHint(
+            $skillQuestionId,
+            $this->request->post['hint1'],
+            1,
+        );
+        $hintId = $skillQuestions->createHint(
+            $skillQuestionId,
+            $this->request->post['hint2'],
+            2,
+        );
+        $hintId = $skillQuestions->createHint(
+            $skillQuestionId,
+            $this->request->post['hint3'],
+            3,
+        );
+
+        return $this->redirectTo('/curriculum');
+    }
+
+    public function createNumericAnswer(SkillQuestionsRepository $skillQuestions, RecaptchaClient $recaptcha)
+    {
+        if (! $this->isAdmin()) {
+            return $this->redirectTo('/curriculum');
+        }
+
+        if ($this->recaptchaInvalid($recaptcha)) {
+            return $this->redirectTo('/curriculum');
+        }
+
+        $this->request->validate([
+            'question' => ['required', 'max:8000'],
+            'skill_id' => ['required', 'int'],
+            'skill_question_category_id' => ['required', 'int'],
+            'hint1' => ['required', 'max:1000'],
+            'hint2' => ['required', 'max:1000'],
+            'hint3' => ['required', 'max:1000'],
+        ]);
+        $numNumericInputs = substr_count($this->request->post['question'], '{NUMERIC_INPUT}');
+        if ($numNumericInputs === 0) {
+            $errors['question'] = 'You must have at least one {NUMERIC_INPUT} for this type of question';
+            $this->request->session['errors'] = $errors;
+            $this->request->session['formVars'] = $this->request->request;
+            $this->request->flash('Please add a {NUMERIC_INPUT}', 'danger');
+
+            return $this->redirectTo('/skill-questions/newNumericAnswer');
+        }
+        for ($i = 0; $i < $numNumericInputs; $i++) {
+            $this->request->validate(['answer'.$i => ['set', 'max:1000']]);
+            $this->request->validate(['numeric_type'.$i => ['required', 'int']]);
+        }
+
+        $questionImageInfo = $this->request->files['question_image'];
+        $numImageTags = substr_count($this->request->post['question'], '{IMAGE}');
+        if ($numImageTags > 1) {
+            $errors['question'] = 'You cannot have more than one {IMAGE} for a question';
+            $this->request->session['errors'] = $errors;
+            $this->request->session['formVars'] = $this->request->request;
+            $this->request->flash('Please ensure there is only one {IMAGE} field', 'danger');
+
+            return $this->redirectTo('/skill-questions/newNumericAnswer');
+        } elseif ($numImageTags == 1) {
+            if (empty($questionImageInfo) || $questionImageInfo['size'] <= 0) {
+                $errors['question_image'] = 'You must upload an image for the {IMAGE} tag';
+                $this->request->session['errors'] = $errors;
+                $this->request->session['formVars'] = $this->request->request;
+                $this->request->flash('Please ensure you upload an image for the {IMAGE} tag', 'danger');
+
+                return $this->redirectTo('/skill-questions/newNumericAnswer');
+            }
+        }
+
+        $skillQuestionId = $skillQuestions->create(
+            $this->request->post['question'],
+            $this->request->post['skill_id'],
+            3, /* Numeric Question Type */
+            $this->request->post['skill_question_category_id'],
+            0 /* randomise_options - not relevant for this question type */
+        );
+
+        // Process image
+        if (! empty($questionImageInfo) && $questionImageInfo['size'] > 0) {
+            if (! $this->isSkillQuestionImageValid($questionImageInfo)) {
+                $this->request->session['errors'] = $this->errors;
+                $this->request->session['formVars'] = $this->request->request;
+                $this->request->flash('The image was not valid!', 'danger');
+
+                return $this->redirectTo('/skill-questions/newNumericAnswer');
+            }
+            $questionImage = $this->moveFile(
+                'uploads/skill-questions',
+                $questionImageInfo,
+                $skillQuestionId
+            );
+            if ($questionImage) {
+                $rowsUpdated = $skillQuestions->updateImage(
+                    $skillQuestionId,
+                    $questionImage
+                );
+            }
+        }
+
+        for ($i = 0; $i < $numNumericInputs; $i++) {
+            $skillQuestionNumericId = $skillQuestions->createNumericAnswer(
+                $skillQuestionId,
+                $this->request->post['numeric_type'.$i],
+                $this->request->post['answer'.$i],
                 empty($this->request->post['simplify'.$i]) ? 0 : 1
             );
         }

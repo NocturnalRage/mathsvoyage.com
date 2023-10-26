@@ -66,6 +66,35 @@
 
 math-field {
   margin: 0.5em;
-  width: 20rem;
-  font-size: 1rem;
+  font-size: 20px;
+}
+
+math-field.small {
+  width: 90px;
+  font-size: 20px;
+}
+
+math-field.standard {
+  width: 180px;
+  font-size: 20px;
+}
+
+math-field.large {
+  width: 270px;
+  font-size: 20px;
+}
+
+input.small {
+  width: 90px;
+  font-size: 20px;
+}
+
+input.standard {
+  width: 180px;
+  font-size: 20px;
+}
+
+input.large {
+  width: 270px;
+  font-size: 20px;
 }

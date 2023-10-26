@@ -30,6 +30,8 @@ interface SkillsRepository
 
     public function getSkillQuestionCategories();
 
+    public function getNumericTypes();
+
     public function getCurrentWorkedSolutions($skill_id);
 
     public function getTopicWorkedSolutions($skill_id);

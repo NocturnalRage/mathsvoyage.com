@@ -68,8 +68,6 @@ class QuizzesController extends Controller
         $currentSkillQuestionId = $options[0]['skill_question_id'];
         $currentSkillQuestionTypeId = $options[0]['skill_question_type_id'];
         $currentRandomise = $options[0]['randomise_options'];
-        $currentForm = $options[0]['form'];
-        $currentSimplify = $options[0]['simplify'];
 
         foreach ($options as $option) {
             if ($option['skill_question_id'] != $currentSkillQuestionId) {
@@ -85,8 +83,6 @@ class QuizzesController extends Controller
                     'skill_question_id' => $currentSkillQuestionId,
                     'skill_question_type_id' => $currentSkillQuestionTypeId,
                     'randomise_options' => $currentRandomise,
-                    'form' => $currentForm,
-                    'simplify' => $currentSimplify,
                     'answers' => $answer,
                     'hints' => $hints,
                 ];
@@ -96,8 +92,6 @@ class QuizzesController extends Controller
                 $currentSkillQuestionId = $option['skill_question_id'];
                 $currentSkillQuestionTypeId = $option['skill_question_type_id'];
                 $currentRandomise = $option['randomise_options'];
-                $currentForm = $option['form'];
-                $currentSimplify = $option['simplify'];
             }
             if ($currentSkillQuestionTypeId === 1) {
                 $answer[] = [
@@ -106,8 +100,17 @@ class QuizzesController extends Controller
                     'option_order' => $option['option_order'],
                     'correct' => $option['correct'],
                 ];
+            } elseif ($currentSkillQuestionTypeId === 2) {
+                $answer[] = [
+                    'answer' => $option['kas_answer'],
+                    'form' => $option['kas_form'],
+                    'simplify' => $option['kas_simplify'],
+                ];
             } else {
-                $answer[] = $option['answer'];
+                $answer[] = [
+                    'answer' => $option['numeric_answer'],
+                    'simplify' => $option['numeric_simplify'],
+                ];
             }
         }
         if ($currentSkillQuestionTypeId === 1 && $currentRandomise) {
@@ -121,8 +124,6 @@ class QuizzesController extends Controller
             'question_image' => $currentQuestionImage,
             'skill_question_id' => $currentSkillQuestionId,
             'skill_question_type_id' => $currentSkillQuestionTypeId,
-            'form' => $currentForm,
-            'simplify' => $currentSimplify,
             'answers' => $answer,
             'hints' => $hints,
         ];
@@ -199,7 +200,7 @@ class QuizzesController extends Controller
         if ($this->request->post['skillQuestionTypeId'] == 2 && ! isset($this->request->post['answer'])) {
             $this->response->setVars([
                 'status' => json_encode('error'),
-                'message' => json_encode('You must provide a numeric answer for a numeric question.'),
+                'message' => json_encode('You must provide an answer for this type of question.'),
             ]);
 
             return $this->response;
@@ -256,8 +257,8 @@ class QuizzesController extends Controller
 
                 return $this->response;
             }
-        } elseif ($this->request->post['skillQuestionTypeId'] == 2) {
-            if (! $quizzes->updateQuizNumericQuestion(
+        } elseif ($this->request->post['skillQuestionTypeId'] == 2 || $this->request->post['skillQuestionTypeId'] == 3) {
+            if (! $quizzes->updateQuizKasOrNumericQuestion(
                 $this->request->post['quizId'],
                 $this->request->post['skillQuestionId'],
                 $this->request->post['answer'],
