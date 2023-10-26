@@ -173,14 +173,17 @@ class MysqlQuizzesRepository implements QuizzesRepository
                      sqo.option_text,
                      sqo.option_order,
                      sqo.correct,
-                     sqk.answer,
-                     sqk.form,
-                     sqk.simplify
+                     sqk.answer as kas_answer,
+                     sqk.form as kas_form,
+                     sqk.simplify as kas_simplify,
+                     sqn.answer as numeric_answer,
+                     sqn.simplify as numeric_simplify
               FROM   quizzes q
               JOIN   quiz_questions qq on qq.quiz_id = q.quiz_id
               JOIN   skill_questions sq on sq.skill_question_id = qq.skill_question_id
               LEFT JOIN   skill_question_options sqo on sqo.skill_question_id = sq.skill_question_id
               LEFT JOIN   skill_question_kas sqk on sqk.skill_question_id = sq.skill_question_id
+              LEFT JOIN   skill_question_numeric sqn on sqn.skill_question_id = sq.skill_question_id
               JOIN   skills s on s.skill_id = sq.skill_id
               JOIN   topics t on s.topic_id = t.topic_id
               JOIN   curricula c on t.curriculum_id = c.curriculum_id
@@ -227,7 +230,7 @@ class MysqlQuizzesRepository implements QuizzesRepository
         return $rowsUpdated;
     }
 
-    public function updateQuizNumericQuestion(
+    public function updateQuizKasOrNumericQuestion(
         $quizId,
         $skillQuestionId,
         $answer,
@@ -244,7 +247,7 @@ class MysqlQuizzesRepository implements QuizzesRepository
                 AND    skill_question_id = ?';
         $stmt = $this->dbh->prepare($sql);
         $stmt->bind_param(
-            'dissii',
+            'sissii',
             $answer,
             $correctUnaided,
             $questionStartTime,

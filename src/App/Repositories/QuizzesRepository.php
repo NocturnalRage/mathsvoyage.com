@@ -31,7 +31,7 @@ interface QuizzesRepository
         $questionEndTime
     );
 
-    public function updateQuizNumericQuestion(
+    public function updateQuizKasOrNumericQuestion(
         $quizId,
         $skillQuestionId,
         $answer,

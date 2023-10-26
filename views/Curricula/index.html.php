@@ -17,9 +17,11 @@ include __DIR__.'/../layout/navbar.html.php';
           <a href="/skills/new" class="btn btn-primary">
             <i class="bi bi-plus"></i> New Skill</a>
           <a href="/skill-questions/new" class="btn btn-primary">
-            <i class="bi bi-plus"></i> New Skill Multiple Choice Question</a>
+            <i class="bi bi-plus"></i> New Skill Question - Multiple Choice</a>
           <a href="/skill-questions/newKasAnswer" class="btn btn-primary">
-            <i class="bi bi-plus"></i> New Skill Kas Answer Question</a>
+            <i class="bi bi-plus"></i> New Skill Question - KAS</a>
+          <a href="/skill-questions/newNumericAnswer" class="btn btn-primary">
+            <i class="bi bi-plus"></i> New Skill Question - Numeric</a>
           <a href="/videos/new" class="btn btn-primary">
             <i class="bi bi-plus"></i> New Video</a>
           <a href="/worked-solutions/new" class="btn btn-primary">

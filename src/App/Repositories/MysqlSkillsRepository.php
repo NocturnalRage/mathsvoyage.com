@@ -130,10 +130,15 @@ class MysqlSkillsRepository implements SkillsRepository
                        sqo.correct,
                        sqo.option_order,
                        sqk.skill_question_kas_id,
-                       sqk.answer
+                       sqk.answer as kas_answer,
+                       sqk.form as kas_form,
+                       sqk.simplify as kas_simplify,
+                       sqn.answer as numeric_answer,
+                       sqn.simplify as numeric_simplify
                 FROM   skill_questions sq
                 LEFT JOIN skill_question_options sqo ON sq.skill_question_id = sqo.skill_question_id
                 LEFT JOIN skill_question_kas sqk ON sq.skill_question_id = sqk.skill_question_id
+                LEFT JOIN skill_question_numeric sqn ON sq.skill_question_id = sqn.skill_question_id
                 WHERE  skill_id = ?
                 ORDER BY sq.skill_question_id, sqo.option_order';
         $stmt = $this->dbh->prepare($sql);
@@ -235,6 +240,16 @@ class MysqlSkillsRepository implements SkillsRepository
         $sql = 'SELECT *
                 FROM   skill_question_categories
                 ORDER BY skill_question_category_id';
+        $result = $this->dbh->query($sql);
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getNumericTypes()
+    {
+        $sql = 'SELECT *
+                FROM   numeric_types
+                ORDER BY numeric_type_id';
         $result = $this->dbh->query($sql);
 
         return $result->fetch_all(MYSQLI_ASSOC);

@@ -129,6 +129,26 @@ class MysqlSkillQuestionsRepository implements SkillQuestionsRepository
         return $this->dbh->insert_id;
     }
 
+    public function createNumericAnswer($skill_question_id, $numeric_type_id, $answer, $simplify)
+    {
+        $sql = 'INSERT INTO skill_question_numeric (
+              skill_question_numeric_id,
+              skill_question_id,
+              numeric_type_id,
+              answer,
+              simplify,
+              created_at,
+              updated_at
+            )
+            VALUES (NULL, ?, ?, ?, ?, now(), now())';
+        $stmt = $this->dbh->prepare($sql);
+        $stmt->bind_param('iisi', $skill_question_id, $numeric_type_id, $answer, $simplify);
+        $stmt->execute();
+        $stmt->close();
+
+        return $this->dbh->insert_id;
+    }
+
     public function updateImage($skill_question_id, $question_image)
     {
         $sql = 'UPDATE skill_questions
