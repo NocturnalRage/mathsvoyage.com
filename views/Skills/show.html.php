@@ -33,13 +33,13 @@ include __DIR__.'/../layout/navbar.html.php';
                 <div class="card-text">
                   <?php
                     $htmlQuestion = str_replace('{MATHFIELD_SMALL}', '<math-field class="small"></math-field>', $question['question']);
-                    $htmlQuestion = str_replace('{MATHFIELD_LARGE}', '<math-field class="large"></math-field>', $htmlQuestion);
-                    $htmlQuestion = str_replace('{MATHFIELD}', '<math-field class="standard"></math-field>', $htmlQuestion);
-                    $htmlQuestion = str_replace('{NUMERIC_INPUT_SMALL}', '<input class="small" type="text">', $htmlQuestion);
-                    $htmlQuestion = str_replace('{NUMERIC_INPUT_LARGE}', '<input class="large" type="text">', $htmlQuestion);
-                    $htmlQuestion = str_replace('{NUMERIC_INPUT}', '<input class="standard" type="text">', $htmlQuestion);
-                    $htmlQuestion = str_replace('{IMAGE}', '<img class="questionImage" src="/uploads/skill-questions/' . $question['question_image'] . '" alt="Question Image" />', $htmlQuestion);
-                  ?>
+              $htmlQuestion = str_replace('{MATHFIELD_LARGE}', '<math-field class="large"></math-field>', $htmlQuestion);
+              $htmlQuestion = str_replace('{MATHFIELD}', '<math-field class="standard"></math-field>', $htmlQuestion);
+              $htmlQuestion = str_replace('{NUMERIC_INPUT_SMALL}', '<input class="small" type="text">', $htmlQuestion);
+              $htmlQuestion = str_replace('{NUMERIC_INPUT_LARGE}', '<input class="large" type="text">', $htmlQuestion);
+              $htmlQuestion = str_replace('{NUMERIC_INPUT}', '<input class="standard" type="text">', $htmlQuestion);
+              $htmlQuestion = str_replace('{IMAGE}', '<img class="questionImage" src="/uploads/skill-questions/'.$question['question_image'].'" alt="Question Image" />', $htmlQuestion);
+              ?>
                   <?= $htmlQuestion ?>
           <?php } ?>
                 <?php if ($question['skill_question_type_id'] == 1) { ?>
@@ -48,13 +48,13 @@ include __DIR__.'/../layout/navbar.html.php';
                   <?php } else { ?>
                     <p><?= $this->esc($question['option_order'].': '.$question['option_text']); ?></p>
                   <?php } ?>
-                <?php } else if ($question['skill_question_type_id'] == 2) { ?>
+                <?php } elseif ($question['skill_question_type_id'] == 2) { ?>
                   <p><?= $this->esc($question['kas_answer']); ?></p>
-                  <p><?= $this->esc('Same form: ' . $question['kas_form']); ?></p>
-                  <p><?= $this->esc('Simplify: ' . $question['kas_simplify']); ?></p>
-                <?php } else if ($question['skill_question_type_id'] == 3) { ?>
+                  <p><?= $this->esc('Same form: '.$question['kas_form']); ?></p>
+                  <p><?= $this->esc('Simplify: '.$question['kas_simplify']); ?></p>
+                <?php } elseif ($question['skill_question_type_id'] == 3) { ?>
                   <p><?= $this->esc($question['numeric_answer']); ?></p>
-                  <p><?= $this->esc('Simplify: ' . $question['numeric_simplify']); ?></p>
+                  <p><?= $this->esc('Simplify: '.$question['numeric_simplify']); ?></p>
                 <?php } ?>
         <?php } ?>
             </div>
