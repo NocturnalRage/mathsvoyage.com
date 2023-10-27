@@ -2,7 +2,6 @@ import * as KAS from './kas/index'
 import { renderMathInElement } from 'mathlive'
 import { Howl } from 'howler'
 import confetti from 'canvas-confetti'
-console.log(fractionToDecimal('-200/-3'))
 
 const startButton = document.getElementById('startBtn')
 const instructions = document.getElementById('instructions')
@@ -414,9 +413,27 @@ function checkNumericAnswer (currentQuestion) {
     const solution = currentQuestion.answers[answerNum]
     const solutionAnswerType = getAnswerType(solution.answer)
     if (solutionAnswerType === 'integer') {
-      correctAnswer = parseInt(solution.answer)
+      correctAnswer = parseInt(
+        solution.answer
+          // Replace unicode minus sign with hyphen
+          .replace(/\u2212/, '-')
+          // Remove space after +, -
+          .replace(/([+-])\s+/g, '$1')
+          // Remove leading/trailing whitespace
+          .replace(/(^\s*)|(\s*$)/gi, '')
+      )
+    } else if (solutionAnswerType === 'mixed') {
+      correctAnswer = mixedToDecimal(solution.answer)
     } else if (solutionAnswerType === 'decimal') {
-      correctAnswer = parseFloat(solution.answer)
+      correctAnswer = parseFloat(
+        solution.answer
+          // Replace unicode minus sign with hyphen
+          .replace(/\u2212/, '-')
+          // Remove space after +, -
+          .replace(/([+-])\s+/g, '$1')
+          // Remove leading/trailing whitespace
+          .replace(/(^\s*)|(\s*$)/gi, '')
+      )
     } else if (solutionAnswerType === 'proper' || solutionAnswerType === 'improper') {
       const solutionFrac = fractionToDecimal(solution.answer)
       correctAnswer = solutionFrac.value
@@ -426,10 +443,46 @@ function checkNumericAnswer (currentQuestion) {
     const studentInput = document.getElementById('numeric_input_' + answerNum)
     const studentAnswer = studentInput.value
     const answerType = getAnswerType(studentAnswer)
-    if (answerType === 'integer' && parseInt(studentAnswer) === correctAnswer) {
-      totalCorrect++
-    } else if (answerType === 'decimal' && parseFloat(studentAnswer) === correctAnswer) {
-      totalCorrect++
+    console.log(answerType)
+    if (answerType === 'integer') {
+      const parsedStudentAnswer = parseInt(
+        studentAnswer
+          // Replace unicode minus sign with hyphen
+          .replace(/\u2212/, '-')
+          // Remove space after +, -
+          .replace(/([+-])\s+/g, '$1')
+          // Remove leading/trailing whitespace
+          .replace(/(^\s*)|(\s*$)/gi, '')
+      )
+      if (parsedStudentAnswer === correctAnswer) {
+        totalCorrect++
+      }
+    } else if (answerType === 'mixed') {
+      const mixed = mixedToDecimal(studentAnswer)
+      const parsedStudentAnswer = mixed.value
+      if (parsedStudentAnswer === correctAnswer.value) {
+        if (!solution.simplify) {
+          totalCorrect++
+        } else if (solution.simplify && mixed.simplified) {
+          totalCorrect++
+        } else {
+          nearlyCorrect = true
+          feedbackMessage += 'You need to simplify ' + studentAnswer + ' '
+        }
+      }
+    } else if (answerType === 'decimal') {
+      const parsedStudentAnswer = parseFloat(
+        studentAnswer
+          // Replace unicode minus sign with hyphen
+          .replace(/\u2212/, '-')
+          // Remove space after +, -
+          .replace(/([+-])\s+/g, '$1')
+          // Remove leading/trailing whitespace
+          .replace(/(^\s*)|(\s*$)/gi, '')
+      )
+      if (parsedStudentAnswer === correctAnswer) {
+        totalCorrect++
+      }
     } else if (answerType === 'proper' || answerType === 'improper') {
       const frac = fractionToDecimal(studentAnswer)
       const parsedStudentAnswer = frac.value
@@ -443,7 +496,12 @@ function checkNumericAnswer (currentQuestion) {
           feedbackMessage += 'You need to simplify ' + studentAnswer + ' '
         }
       }
+    } else {
+      /* We could not recognise their answer type */
+      nearlyCorrect = true
+      feedbackMessage += ' We did not understand the format of your answer: ' + studentAnswer + '. Please try entering your answer in a different format. '
     }
+
     studentAnswers += studentInput.value + ' '
   }
 
@@ -723,6 +781,8 @@ function quizQuestionHtml (currentQuestion) {
 }
 
 function getAnswerType (input) {
+  // Remove leading/trailing whitespace
+  input = input.replace(/(^\s*)|(\s*$)/gi, '')
   input = input.replace(/\u2212/, '-').replace(/([+-])\s+/g, '$1')
   if (input.match(/^[+-]?\d+$/)) {
     return 'integer'
@@ -768,6 +828,38 @@ function fractionToDecimal (answer) {
       simplified
     }
   }
+  return []
+}
+
+function mixedToDecimal (answer) {
+  const match = answer
+    // Replace unicode minus sign with hyphen
+    .replace(/\u2212/, '-')
+    // Remove space after +, -
+    .replace(/([+-])\s+/g, '$1')
+    // Remove leading/trailing whitespace
+    .replace(/(^\s*)|(\s*$)/gi, '')
+    // Extract integer, numerator and denominator
+    .match(/^([+-]?)(\d+)\s+(\d+)\s*\/\s*(\d+)$/)
+
+  if (match) {
+    const sign = parseFloat(match[1] + '1')
+    const integ = parseFloat(match[2])
+    const numerator = parseFloat(match[3])
+    const denominator = parseFloat(match[4])
+    const simplified = numerator < denominator && getGCD(numerator, denominator) === 1
+    const value = sign * (integ + numerator / denominator)
+
+    return {
+      sign,
+      integ,
+      numerator,
+      denominator,
+      simplified,
+      value
+    }
+  }
+  return []
 }
 
 function getGCD (a, b) {
