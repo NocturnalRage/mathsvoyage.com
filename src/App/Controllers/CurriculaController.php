@@ -160,7 +160,7 @@ class CurriculaController extends Controller
     public function create_quiz(CurriculaRepository $curricula, QuizzesRepository $quizzes)
     {
         if (! $this->loggedIn()) {
-            return $this->redirectToLoginPage();
+            return $this->redirectTo('/login');
         }
 
         $curriculum = $curricula->findBySlugOrFail($this->request->post['curriculumSlug']);
