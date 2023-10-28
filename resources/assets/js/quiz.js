@@ -425,14 +425,16 @@ function checkNumericAnswer (currentQuestion) {
     } else if (solutionAnswerType === 'mixed') {
       correctAnswer = mixedToDecimal(solution.answer)
     } else if (solutionAnswerType === 'decimal') {
-      correctAnswer = parseFloat(
-        solution.answer
-          // Replace unicode minus sign with hyphen
-          .replace(/\u2212/, '-')
-          // Remove space after +, -
-          .replace(/([+-])\s+/g, '$1')
-          // Remove leading/trailing whitespace
-          .replace(/(^\s*)|(\s*$)/gi, '')
+      correctAnswer = roundDecimal(
+        parseFloat(
+          solution.answer
+            // Replace unicode minus sign with hyphen
+            .replace(/\u2212/, '-')
+            // Remove space after +, -
+            .replace(/([+-])\s+/g, '$1')
+            // Remove leading/trailing whitespace
+            .replace(/(^\s*)|(\s*$)/gi, '')
+        )
       )
     } else if (solutionAnswerType === 'proper' || solutionAnswerType === 'improper') {
       const solutionFrac = fractionToDecimal(solution.answer)
@@ -443,7 +445,6 @@ function checkNumericAnswer (currentQuestion) {
     const studentInput = document.getElementById('numeric_input_' + answerNum)
     const studentAnswer = studentInput.value
     const answerType = getAnswerType(studentAnswer)
-    console.log(answerType)
     if (answerType === 'integer') {
       const parsedStudentAnswer = parseInt(
         studentAnswer
@@ -471,14 +472,16 @@ function checkNumericAnswer (currentQuestion) {
         }
       }
     } else if (answerType === 'decimal') {
-      const parsedStudentAnswer = parseFloat(
-        studentAnswer
-          // Replace unicode minus sign with hyphen
-          .replace(/\u2212/, '-')
-          // Remove space after +, -
-          .replace(/([+-])\s+/g, '$1')
-          // Remove leading/trailing whitespace
-          .replace(/(^\s*)|(\s*$)/gi, '')
+      const parsedStudentAnswer = roundDecimal(
+        parseFloat(
+          studentAnswer
+            // Replace unicode minus sign with hyphen
+            .replace(/\u2212/, '-')
+            // Remove space after +, -
+            .replace(/([+-])\s+/g, '$1')
+            // Remove leading/trailing whitespace
+            .replace(/(^\s*)|(\s*$)/gi, '')
+        )
       )
       if (parsedStudentAnswer === correctAnswer) {
         totalCorrect++
@@ -817,7 +820,7 @@ function fractionToDecimal (answer) {
   if (fraction) {
     const numerator = parseFloat(fraction[1])
     const denominator = parseFloat(fraction[2])
-    const value = numerator / denominator
+    const value = roundDecimal(numerator / denominator)
     const simplified =
       denominator !== 0 &&
       getGCD(numerator, denominator) === 1
@@ -848,7 +851,7 @@ function mixedToDecimal (answer) {
     const numerator = parseFloat(match[3])
     const denominator = parseFloat(match[4])
     const simplified = numerator < denominator && getGCD(numerator, denominator) === 1
-    const value = sign * (integ + numerator / denominator)
+    const value = roundDecimal(sign * (integ + numerator / denominator))
 
     return {
       sign,
@@ -875,6 +878,10 @@ function getGCD (a, b) {
   }
 
   return a
+}
+
+function roundDecimal (answer, precision = 1e10) {
+  return Math.round(answer * precision) / precision
 }
 
 // display quiz after start button pressed
