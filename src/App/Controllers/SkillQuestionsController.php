@@ -97,12 +97,28 @@ class SkillQuestionsController extends Controller
             'hint3' => ['required', 'max:1000'],
         ]);
 
-        $numMathfields = substr_count($this->request->post['question'], '{MATHFIELD}');
+        $numMathfields =
+           substr_count($this->request->post['question'], '{MATHFIELD}') +
+           substr_count($this->request->post['question'], '{MATHFIELD_SMALL}') +
+           substr_count($this->request->post['question'], '{MATHFIELD_LARGE}');
         if ($numMathfields > 0) {
             $errors['question'] = 'You cannot have any {MATHFIELD} for a multiple choice question';
             $this->request->session['errors'] = $errors;
             $this->request->session['formVars'] = $this->request->request;
             $this->request->flash('Please remove {MATHFIELD} from the question', 'danger');
+
+            return $this->redirectTo('/skill-questions/new');
+        }
+
+        $numNumericInputs =
+           substr_count($this->request->post['question'], '{NUMERIC_INPUT}') +
+           substr_count($this->request->post['question'], '{NUMERIC_INPUT_SMALL}') +
+           substr_count($this->request->post['question'], '{NUMERIC_INPUT_LARGE}');
+        if ($numNumericInputs > 0) {
+            $errors['question'] = 'You cannot have any {NUMERIC_INPUT} for a multiple choice question';
+            $this->request->session['errors'] = $errors;
+            $this->request->session['formVars'] = $this->request->request;
+            $this->request->flash('Please remove {NUMERIC_INPUT} from the question', 'danger');
 
             return $this->redirectTo('/skill-questions/new');
         }
@@ -227,7 +243,10 @@ class SkillQuestionsController extends Controller
             'hint2' => ['required', 'max:1000'],
             'hint3' => ['required', 'max:1000'],
         ]);
-        $numMathfields = substr_count($this->request->post['question'], '{MATHFIELD}');
+        $numMathfields =
+           substr_count($this->request->post['question'], '{MATHFIELD}') +
+           substr_count($this->request->post['question'], '{MATHFIELD_SMALL}') +
+           substr_count($this->request->post['question'], '{MATHFIELD_LARGE}');
         if ($numMathfields === 0) {
             $errors['question'] = 'You must have at least one {MATHFIELD} for this type of question';
             $this->request->session['errors'] = $errors;
@@ -336,7 +355,10 @@ class SkillQuestionsController extends Controller
             'hint2' => ['required', 'max:1000'],
             'hint3' => ['required', 'max:1000'],
         ]);
-        $numNumericInputs = substr_count($this->request->post['question'], '{NUMERIC_INPUT}');
+        $numNumericInputs =
+           substr_count($this->request->post['question'], '{NUMERIC_INPUT}') +
+           substr_count($this->request->post['question'], '{NUMERIC_INPUT_SMALL}') +
+           substr_count($this->request->post['question'], '{NUMERIC_INPUT_LARGE}');
         if ($numNumericInputs === 0) {
             $errors['question'] = 'You must have at least one {NUMERIC_INPUT} for this type of question';
             $this->request->session['errors'] = $errors;
